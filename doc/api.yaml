@@ -1,273 +1,462 @@
-openapi: 3.0.0
-servers:
-  - url: "http://localhost:3000"
+openapi: 3.0.3
 info:
-  title: Fantastic Coffee (decaffeinated)
-  description: Fantastic Coffee (decaffeinated), the skeleton project for Web and Software architecture course
-  version: 1.0.0
+  title:  WASA Photo
+  description: |
+    WASAPhoto REST APIs
+  version: "1.0.0"
 paths:
-  /status:
-    parameters:
-      - $ref: "#/components/parameters/XAppBuild"
-      - $ref: "#/components/parameters/XAppVersion"
-      - $ref: "#/components/parameters/XAppLanguage"
-      - $ref: "#/components/parameters/XAppPlatform"
-    get:
-      tags: ["General"]
-      operationId: getStatusMessage
-      summary: Get status message for the user about issues / updates
-      description: |-
-        The response contains a status message meant for the user. It might
-        contains information about current technical issues, update messages
-        or general information.
+  /session:
+    post:
+      tags: ["login"]
+      summary: Logs in the user
+      description: |
+        If the user does not exist, it will be created, and an identifier is returned.
+        If the user exists, the user identifier is returned.
+      operationId: doLogin
+      requestBody:
+        description: User details
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userName'
+        required: true
       responses:
-        "200":
-          description: Status message available
+        '201':
+          description: User log-in action successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StatusInfo"
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
-
-  /:
-    get:
-      tags: ["Group 1"]
-      operationId: index
-      summary: Get an index
-      description: |-
-        This is an example of an index API description
-      responses:
-        "200":
-          description: Successful
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
-  /context:
+                $ref: '#/components/schemas/ID'
+                
+  /profile/{userName}:
     parameters:
-      - $ref: "#/components/parameters/XAppBuild"
-      - $ref: "#/components/parameters/XAppVersion"
-      - $ref: "#/components/parameters/XAppLanguage"
-      - $ref: "#/components/parameters/XAppPlatform"
-    post:
-      tags: ["Group 1"]
-      operationId: getContext
-      summary: Another API example
-      description: |-
-        Example description 2
-      responses:
-        "200":
-          description: Request ok
-          headers:
-            X-Access-Token:
-              description: Access token for authenticated requests
-              schema: { type: string }
-        "500": { $ref: "#/components/responses/InternalServerError" }
-  /authenticated:
-    parameters:
-      - $ref: "#/components/parameters/XAppBuild"
-      - $ref: "#/components/parameters/XAppVersion"
-      - $ref: "#/components/parameters/XAppLanguage"
-      - $ref: "#/components/parameters/XAppPlatform"
+      - name: userName
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria
     get:
-      tags: ["Group 2"]
-      operationId: getAuthenticatedExample
-      summary: Get an endpoint with authentication
-      description: |-
-        Get an endpoint with auth
-      security:
-        - LegacyAuth: []
-        - AppToken: []
+      tags: ["profile"]
+      operationId: getUserProfile
+      summary: Get user profiles 
+      description: A user can search other user profiles via username
       responses:
         "200":
-          description: Logout successful
-        "500": { $ref: "#/components/responses/InternalServerError" }
-
-  /pictures/{cat}:
-    parameters:
-      - $ref: "#/components/parameters/XAppBuild"
-      - $ref: "#/components/parameters/XAppVersion"
-      - $ref: "#/components/parameters/XAppLanguage"
-      - $ref: "#/components/parameters/XAppPlatform"
-      - $ref: "#/components/parameters/cat"
-    get:
-      tags: ["Cat pictures"]
-      operationId: getCatFromPicture
-      summary: Example of a parameter in URL
-      description: |-
-        Example of a parameter in URL
-      security:
-        - LegacyAuth: []
-      responses:
-        "200":
-          description: Student picture found
+          description: The user profile
           content:
-            image/png:
+            application/json:
               schema:
-                type: string
-                format: binary
-              example: Picture binary file
+                 $ref: "#/components/schemas/profile"
         "404":
-          description: Student picture not found
-        "500": { $ref: "#/components/responses/InternalServerError" }
-
-
-  /autofeeder/{cat}:
-    parameters:
-      - $ref: "#/components/parameters/XAppBuild"
-      - $ref: "#/components/parameters/XAppVersion"
-      - $ref: "#/components/parameters/XAppLanguage"
-      - $ref: "#/components/parameters/XAppPlatform"
-      - $ref: "#/components/parameters/cat"
+          description: User not found
+          
     put:
-      tags: ["Autofeeder"]
-      operationId: createCatAutofeeder
-      summary: Example of PUT operation
-      security:
-        - LegacyAuth: []
-      responses:
-        "200":
-          description: Auto feed enabled
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
-    delete:
-      tags: ["Autofeeder"]
-      operationId: deleteCatAutofeeder
-      summary: Example of DELETE operation
-      security:
-        - LegacyAuth: []
-      responses:
-        "200":
-          description: Auto feed disabled
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
-
-  /session/login:
-    parameters:
-      - $ref: "#/components/parameters/XAppBuild"
-      - $ref: "#/components/parameters/XAppVersion"
-      - $ref: "#/components/parameters/XAppLanguage"
-      - $ref: "#/components/parameters/XAppPlatform"
-    post:
-      tags: ["Session management"]
-      operationId: login
-      summary: Log-in into system
-      description: |-
-        Perform a log-in action using username and password credentials.
-        Returns a token which can be used in authenticated requests.
+      tags: ["profile"]
+      operationId: setMyUserName
+      summary: Set the user name
+      description: Replace a name for the given user name
       requestBody:
+        required: true
+        description: The new name for the given user
         content:
-          application/x-www-form-urlencoded:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userName'
+      responses:
+        "204":
+          description: The username was successfully changed
+        "404":
+          description: User not found
+          
+  /profile/{userName}/banned:
+    parameters:
+      - name: userName
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria
+    put:
+      tags: ["banned"]
+      operationId: banUser
+      summary: Ban another user
+      description: It allows the user to ban another one. If A ban B, B won't be able to see any information about A
+      requestBody:
+        required: true
+        description: The name of the user we want to ban
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userName'
+      responses:
+        "204":
+          description: A user has been banned
+     
+  /profile/{userName}/banned/{user}:
+    parameters:
+      - name: userName
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria 
+      - name: user
+        in: path
+        description: The name of the user we want to unban
+        required: true
+        schema:
+          type: string
+          example: Luca
+    delete:
+      tags: ["banned"]
+      operationId: unbanUser
+      summary: Unban another user
+      description: It allow the user to unban another one
+      responses:
+        "204":
+          description: The unban was successfully.
+        "404":
+          description: User not found.
+
+  /profile/{userName}/followers:
+    parameters:
+      - name: userName
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria 
+    put:
+      tags: ["follower"]
+      operationId: followUser
+      summary: Follow another user
+      description: It allows the user to follow another one
+      requestBody:
+        required: true
+        description: The name of the user we want to follow
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userName'
+      responses:
+        "204":
+          description: A new follower has been added
+                
+  /profile/{userName}/followers/{user}:
+    parameters:
+      - name: userName
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria 
+      - name: user
+        in: path
+        description: The name of the user we want to unfollow
+        required: true
+        schema:
+          type: string
+          example: Luca
+    delete:
+      tags: ["follower"]
+      operationId: unfollowUser
+      summary: Unfollow another user
+      description: It allow the user to unfollow another one
+      responses:
+        "204":
+          description: The unfollow was successfully.
+        "404":
+          description: User not found.
+
+  /profile/{userName}/photos:
+    parameters:
+      - name: userName
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria 
+    post:
+      tags: ["photo"]
+      operationId: uploadPhoto
+      summary: upload a photo
+      description: This method allows the user to upload a photo
+      requestBody:
+        required: true
+        description: The image we want to upload
+        content:
+          image/png:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "201":
+          description: The photo has been uploaded and its information is being returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/photo"
+    get:
+      tags: ["photo"]
+      operationId: getMyStream
+      summary: get my stream of photo
+      description: The method allows the user to know his stream (in reverse chronological order)
+      responses:
+        "200":
+          description: Return the photo stream
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: binary
+                  
+  /profile/{userName}/photos/{photoID}:
+    parameters:
+      - name: userName
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria
+      - name: photoID
+        in: path
+        description: Describe a photo ID
+        required: true
+        schema:
+          type: string
+          example: d732fhh
+    delete:
+      tags: ["photo"]
+      operationId: deletePhoto
+      summary: delete a photo
+      description: Allows you to delete a photo. Removal of an image will also remove likes and comments
+      responses:
+        "204":
+          description: The deletion was successfully.
+        "404":
+          description: Photo not found.
+
+  /profile/{userName}/photos/{photoID}/likes: 
+    parameters:
+      - name: userName
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria
+      - name: photoID
+        in: path
+        description: Describe a photo ID
+        required: true
+        schema:
+          type: string
+          example: d732fhh
+    put:
+      tags: ["likes"]
+      operationId: likePhoto
+      summary: Like a photo
+      description: Let the user like a photo
+      requestBody:
+        required: true
+        description: The name of the user who liked
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userName'
+      responses:
+        "204":
+          description: The photo was liked
+        "404":
+          description: Photo not found
+          
+  /profile/{userName}/photos/{photoID}/likes/{user}: 
+    parameters:
+      - name: userName
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria
+      - name: photoID
+        in: path
+        description: Describe a photo ID
+        required: true
+        schema:
+          type: string
+          example: d732fhh
+      - name: user
+        in: path
+        description: The name of the user we want to remove the like
+        required: true
+        schema:
+          type: string
+          example: Luca
+    delete:
+      tags: ["likes"]
+      operationId: unlikePhoto
+      summary: unlike a photo
+      description: Allows you to unlike a photo
+      responses:
+        "204":
+          description: The like deletion was successfully.
+        "404":
+          description: Photo not found.
+  
+  /profile/{userName}/photos/{photoID}/comments: 
+    parameters:
+      - name: userName
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria
+      - name: photoID
+        in: path
+        description: Describe a photo ID
+        required: true
+        schema:
+          type: string
+          example: d732fhh
+    post:
+      tags: ["comments"]
+      operationId: commentPhoto
+      summary: Comment a photo
+      description: Let the user comment a photo
+      requestBody:
+        required: true
+        description: The name and comment of the user who commented
+        content:
+          application/json:
             schema:
               type: object
               properties:
-                userid:
+                name:
                   type: string
-                  pattern: '^[a-zA-Z0-9]+$'
-                  minLength: 3
-                  maxLength: 255
-                password:
+                  example: Mario
+                comment:
                   type: string
-                  pattern: '^.*?$'
-                  minLength: 8
-                  maxLength: 255
+                  example: What a beatiful photo!
       responses:
-        "200":
-          description: Login successful
-          headers:
-            X-Access-Token:
-              description: Access token for authenticated requests
-              schema: { type: string }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "403":
-          description: Login failed
-          headers:
-            X-Message:
-              description: Error message
-              schema: { type: string }
-        "500": { $ref: "#/components/responses/InternalServerError" }
-
+        "204":
+          description: The photo was commented
+        "404":
+          description: Photo not found
+          
+  /profile/{userName}/photos/{photoID}/comments/{user}: 
+    parameters:
+      - name: userName
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria
+      - name: photoID
+        in: path
+        description: Describe a photo ID
+        required: true
+        schema:
+          type: string
+          example: d732fhh
+      - name: user
+        in: path
+        description: The name of the user we want to remove the comment
+        required: true
+        schema:
+          type: string
+          example: Luca 
+    delete:
+      tags: ["comments"]
+      operationId: uncommentPhoto
+      summary: uncomment a photo
+      description: Allows you to uncomment a photo. Only authors can remove their comments.
+      responses:
+        "204":
+          description: The comment deletion was successfully.
+        "404":
+          description: Photo not found.
+        
 
 components:
+  securitySchemes:
+    bearerAuth: 
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
   schemas:
-    StatusInfo:
-      title: Status Info
+    profile:
+      title: profile
+      description: describe the user profile
       type: object
       properties:
-        status:
+          photos:
+            type: array 
+            items: 
+              $ref: '#/components/schemas/photo'
+          photoNumber:
+            type: integer
+            example: 5
+          follower:
+            type: array
+            items:
+              $ref: '#/components/schemas/userName'
+          following:
+            type: array
+            items:
+              $ref: '#/components/schemas/userName'
+    photo:
+      title: photo
+      description: description of a photo
+      type: object
+      properties:
+        photo:
           type: string
-          enum:
-            - info
-            - warning
-            - critical
-            - ""
-        title: { type: string }
-        message: { type: string }
-        url: { type: string }
-
-  responses:
-    Unauthorized:
-      description: The access token is missing or it's expired
-    BadRequest:
-      description: The request was not compliant with the documentation (eg. missing fields, etc)
-    InternalServerError:
-      description: The server encountered an internal error. Further info in server logs
-
-  securitySchemes:
-    LegacyAuth:
-      type: apiKey
-      in: header
-      name: X-App-Token
-      description: |-
-        App session token value. This value is sent by the server in the login
-        and session refresh APIs.
-
-  parameters:
-    XAppVersion:
-      schema:
-        type: string
-        pattern: '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
-        minLength: 1
-        maxLength: 10
-      name: X-App-Version
-      in: header
-      required: true
-      description: App human readable version ("semantic version" format)
-      allowEmptyValue: false
-    XAppBuild:
-      schema: { type: integer }
-      name: X-App-Build
-      in: header
-      required: true
-      description: App build number
-      allowEmptyValue: false
-    XAppLanguage:
-      schema:
-        type: string
-        pattern: '^[a-z]{2}([-_][A-Z]{2})?$'
-        minLength: 2
-        maxLength: 5
-      name: X-App-Language
-      in: header
-      required: true
-      description: App language in ISO 639-1 format
-      allowEmptyValue: false
-    XAppPlatform:
-      schema:
-        type: string
-        enum: [ios, android]
-      name: X-App-Platform
-      in: header
-      required: true
-      description: App operating system / platform
-      allowEmptyValue: false
-    cat:
-      schema:
-        type: string
-        pattern: '^[a-zA-Z]+$'
-        minLength: 3
-        maxLength: 10
-      name: cat
-      in: path
-      required: true
-      description: Cat
-      allowEmptyValue: false
+          format: binary
+          description: represent the actual photo in a binary format
+        photoID:
+          type: string
+          example: d732fhh
+        date: 
+          type: string
+          example: "01/01/2022"
+        likeNumber:
+          type: integer
+          example: 100
+        commentNumber:
+          type: integer
+          example: 50
+    userName:
+      title: userName
+      description: describe a userName
+      type: object
+      properties:
+        name:
+          type: string
+          example: Maria
+          pattern: 'ˆ.*?$'
+          minLength: 3
+          maxLength: 16
+    ID:
+      title: ID
+      description: describe an ID
+      type: object
+      properties:
+        identifier:
+          type: string
+          example: "abcdef012345"
+security:
+  - bearerAuth: []  
+  
