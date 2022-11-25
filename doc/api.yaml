@@ -77,7 +77,7 @@ paths:
     put:
       tags:
         - profile
-      operationId: setMyuser_name
+      operationId: setMyUserName
       summary: Set the user name
       description: Replace a name for the given user name
       requestBody:
