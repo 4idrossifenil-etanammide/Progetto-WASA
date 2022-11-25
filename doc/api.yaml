@@ -4,10 +4,28 @@ info:
   description: |
     WASAPhoto REST APIs
   version: "1.0.0"
+
+tags:
+  - name: login
+    description: Describe the login operation
+  - name: profile
+    description: Describe the operation on profile
+  - name: banned
+    description: Describe the operation for banning users
+  - name: follower
+    description: Describe the operation for following users
+  - name: photo
+    description: Describe the operation on the photo
+  - name: likes
+    description: Describe the operation for liking/unliking a photo
+  - name: comments
+    description: Describe the operation for comment/uncomment a photo
+
 paths:
   /session:
     post:
-      tags: ["login"]
+      tags:
+        - login
       summary: Logs in the user
       description: |
         If the user does not exist, it will be created, and an identifier is returned.
@@ -18,7 +36,7 @@ paths:
         content: 
           application/json:
             schema:
-              $ref: '#/components/schemas/userName'
+              $ref: '#/components/schemas/user_name'
         required: true
       responses:
         '201':
@@ -28,20 +46,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/ID'
                 
-  /profile/{userName}:
+  /profile/{user_name}:
     parameters:
-      - name: userName
+      - name: user_name
         in: path
         description: Describe the user name
         required: true
         schema:
           type: string
           example: Maria
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
     get:
-      tags: ["profile"]
+      tags:
+        - profile
       operationId: getUserProfile
       summary: Get user profiles 
-      description: A user can search other user profiles via username
+      description: A user can search other user profiles via user_name
       responses:
         "200":
           description: The user profile
@@ -53,8 +75,9 @@ paths:
           description: User not found
           
     put:
-      tags: ["profile"]
-      operationId: setMyUserName
+      tags:
+        - profile
+      operationId: setMyuser_name
       summary: Set the user name
       description: Replace a name for the given user name
       requestBody:
@@ -63,24 +86,38 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/userName'
+              $ref: '#/components/schemas/user_name'
       responses:
         "204":
-          description: The username was successfully changed
+          description: The user_name was successfully changed
         "404":
           description: User not found
           
-  /profile/{userName}/banned:
+  /profile/{user_name}/banned/{user}:
     parameters:
-      - name: userName
+      - name: user_name
         in: path
         description: Describe the user name
         required: true
         schema:
           type: string
-          example: Maria
+          example: Maria 
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
+      - name: user
+        in: path
+        description: The name of the user we want to unban
+        required: true
+        schema:
+          type: string
+          example: Luca
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
     put:
-      tags: ["banned"]
+      tags:
+        - banned
       operationId: banUser
       summary: Ban another user
       description: It allows the user to ban another one. If A ban B, B won't be able to see any information about A
@@ -90,29 +127,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/userName'
+              $ref: '#/components/schemas/user_name'
       responses:
         "204":
           description: A user has been banned
-     
-  /profile/{userName}/banned/{user}:
-    parameters:
-      - name: userName
-        in: path
-        description: Describe the user name
-        required: true
-        schema:
-          type: string
-          example: Maria 
-      - name: user
-        in: path
-        description: The name of the user we want to unban
-        required: true
-        schema:
-          type: string
-          example: Luca
+          
     delete:
-      tags: ["banned"]
+      tags:
+        - banned
       operationId: unbanUser
       summary: Unban another user
       description: It allow the user to unban another one
@@ -122,17 +144,31 @@ paths:
         "404":
           description: User not found.
 
-  /profile/{userName}/followers:
+  /profile/{user_name}/followers/{user}:
     parameters:
-      - name: userName
+      - name: user_name
         in: path
         description: Describe the user name
         required: true
         schema:
           type: string
           example: Maria 
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
+      - name: user
+        in: path
+        description: The name of the user we want to unfollow
+        required: true
+        schema:
+          type: string
+          example: Luca
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
     put:
-      tags: ["follower"]
+      tags:
+        - follower
       operationId: followUser
       summary: Follow another user
       description: It allows the user to follow another one
@@ -142,29 +178,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/userName'
+              $ref: '#/components/schemas/user_name'
       responses:
         "204":
           description: A new follower has been added
                 
-  /profile/{userName}/followers/{user}:
-    parameters:
-      - name: userName
-        in: path
-        description: Describe the user name
-        required: true
-        schema:
-          type: string
-          example: Maria 
-      - name: user
-        in: path
-        description: The name of the user we want to unfollow
-        required: true
-        schema:
-          type: string
-          example: Luca
     delete:
-      tags: ["follower"]
+      tags:
+        - follower
       operationId: unfollowUser
       summary: Unfollow another user
       description: It allow the user to unfollow another one
@@ -174,17 +195,21 @@ paths:
         "404":
           description: User not found.
 
-  /profile/{userName}/photos:
+  /profile/{user_name}/photos:
     parameters:
-      - name: userName
+      - name: user_name
         in: path
         description: Describe the user name
         required: true
         schema:
           type: string
           example: Maria 
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
     post:
-      tags: ["photo"]
+      tags:
+        - photo
       operationId: uploadPhoto
       summary: upload a photo
       description: This method allows the user to upload a photo
@@ -196,6 +221,11 @@ paths:
             schema:
               type: string
               format: binary
+              example: 0000100100100111000
+              minLength: 20
+              maxLength: 10000000
+              pattern: '^.*?$'
+              description: The photo the user want to upload
       responses:
         "201":
           description: The photo has been uploaded and its information is being returned
@@ -204,7 +234,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/photo"
     get:
-      tags: ["photo"]
+      tags:
+        - photo
       operationId: getMyStream
       summary: get my stream of photo
       description: The method allows the user to know his stream (in reverse chronological order)
@@ -216,27 +247,41 @@ paths:
               schema:
                 type: array
                 items:
-                  type: integer
+                  type: string
                   format: binary
-                  
-  /profile/{userName}/photos/{photoID}:
+                  example: 10100001011110010
+                  minLength: 20
+                  maxLength: 10000000
+                  pattern: '^.*?$'
+                minItems: 0
+                maxItems: 50
+                description: The photo stream
+                
+  /profile/{user_name}/photos/{photo_id}:
     parameters:
-      - name: userName
+      - name: user_name
         in: path
         description: Describe the user name
         required: true
         schema:
           type: string
           example: Maria
-      - name: photoID
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
+      - name: photo_id
         in: path
         description: Describe a photo ID
         required: true
         schema:
           type: string
           example: d732fhh
+          minLength: 5
+          maxLength: 100
+          pattern: '^.*?$'
     delete:
-      tags: ["photo"]
+      tags:
+        - photo
       operationId: deletePhoto
       summary: delete a photo
       description: Allows you to delete a photo. Removal of an image will also remove likes and comments
@@ -246,24 +291,41 @@ paths:
         "404":
           description: Photo not found.
 
-  /profile/{userName}/photos/{photoID}/likes: 
+  /profile/{user_name}/photos/{photo_id}/likes/{user}: 
     parameters:
-      - name: userName
+      - name: user_name
         in: path
         description: Describe the user name
         required: true
         schema:
           type: string
           example: Maria
-      - name: photoID
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
+      - name: photo_id
         in: path
         description: Describe a photo ID
         required: true
         schema:
           type: string
           example: d732fhh
+          minLength: 5
+          maxLength: 100
+          pattern: '^.*?$'
+      - name: user
+        in: path
+        description: The name of the user we want to remove the like
+        required: true
+        schema:
+          type: string
+          example: Luca
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
     put:
-      tags: ["likes"]
+      tags:
+        - likes
       operationId: likePhoto
       summary: Like a photo
       description: Let the user like a photo
@@ -273,38 +335,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/userName'
+              $ref: '#/components/schemas/user_name'
       responses:
         "204":
           description: The photo was liked
         "404":
           description: Photo not found
           
-  /profile/{userName}/photos/{photoID}/likes/{user}: 
-    parameters:
-      - name: userName
-        in: path
-        description: Describe the user name
-        required: true
-        schema:
-          type: string
-          example: Maria
-      - name: photoID
-        in: path
-        description: Describe a photo ID
-        required: true
-        schema:
-          type: string
-          example: d732fhh
-      - name: user
-        in: path
-        description: The name of the user we want to remove the like
-        required: true
-        schema:
-          type: string
-          example: Luca
     delete:
-      tags: ["likes"]
+      tags:
+        - likes
       operationId: unlikePhoto
       summary: unlike a photo
       description: Allows you to unlike a photo
@@ -314,24 +354,31 @@ paths:
         "404":
           description: Photo not found.
   
-  /profile/{userName}/photos/{photoID}/comments: 
+  /profile/{user_name}/photos/{photo_id}/comments: 
     parameters:
-      - name: userName
+      - name: user_name
         in: path
         description: Describe the user name
         required: true
         schema:
           type: string
           example: Maria
-      - name: photoID
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
+      - name: photo_id
         in: path
         description: Describe a photo ID
         required: true
         schema:
           type: string
           example: d732fhh
+          minLength: 5
+          maxLength: 100
+          pattern: '^.*?$'
     post:
-      tags: ["comments"]
+      tags:
+        - comments
       operationId: commentPhoto
       summary: Comment a photo
       description: Let the user comment a photo
@@ -342,35 +389,50 @@ paths:
           application/json:
             schema:
               type: object
+              description: The object with the username and his comment
               properties:
                 name:
                   type: string
                   example: Mario
+                  description: The username of the person who commented
+                  minLength: 5
+                  maxLength: 100
+                  pattern: '^.*?$'
                 comment:
                   type: string
                   example: What a beatiful photo!
+                  description: The comment of the person who commented
+                  minLength: 1
+                  maxLength: 200
+                  pattern: '^.*?$'
       responses:
-        "204":
+        "201":
           description: The photo was commented
         "404":
           description: Photo not found
           
-  /profile/{userName}/photos/{photoID}/comments/{user}: 
+  /profile/{user_name}/photos/{photo_id}/comments/{user}: 
     parameters:
-      - name: userName
+      - name: user_name
         in: path
         description: Describe the user name
         required: true
         schema:
           type: string
           example: Maria
-      - name: photoID
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
+      - name: photo_id
         in: path
         description: Describe a photo ID
         required: true
         schema:
           type: string
           example: d732fhh
+          minLength: 5
+          maxLength: 100
+          pattern: '^.*?$'
       - name: user
         in: path
         description: The name of the user we want to remove the comment
@@ -378,8 +440,12 @@ paths:
         schema:
           type: string
           example: Luca 
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
     delete:
-      tags: ["comments"]
+      tags:
+        - comments
       operationId: uncommentPhoto
       summary: uncomment a photo
       description: Allows you to uncomment a photo. Only authors can remove their comments.
@@ -406,41 +472,58 @@ components:
             type: array 
             items: 
               $ref: '#/components/schemas/photo'
-          photoNumber:
+            minItems: 0
+            maxItems: 50
+            description: The photos of the profile user
+          photo_number:
             type: integer
             example: 5
+            description: The number of the photo
           follower:
             type: array
             items:
-              $ref: '#/components/schemas/userName'
+              $ref: '#/components/schemas/user_name'
+            minItems: 0
+            maxItems: 50
+            description: The follower of the profile user
           following:
             type: array
             items:
-              $ref: '#/components/schemas/userName'
+              $ref: '#/components/schemas/user_name'
+            minItems: 0
+            maxItems: 50
+            description: The following of the profile user
     photo:
       title: photo
       description: description of a photo
       type: object
       properties:
-        photo:
-          type: string
-          format: binary
-          description: represent the actual photo in a binary format
-        photoID:
+        photo_id:
           type: string
           example: d732fhh
+          minLength: 5
+          maxLength: 100
+          pattern: '^.*?$'
+          description: The unique photo ID
         date: 
           type: string
-          example: "01/01/2022"
-        likeNumber:
+          example: "2022-01-01"
+          minLength: 10
+          maxLength: 10
+          format: date
+          pattern: '^.*?$'
+          description: The date when the photo was uploaded
+        like_number:
           type: integer
           example: 100
-        commentNumber:
+          description: The number of photo's likes 
+        comment_number:
           type: integer
           example: 50
-    userName:
-      title: userName
-      description: describe a userName
+          description: The number of photo's comments
+    user_name:
+      title: user_name
+      description: describe a user_name
       type: object
       properties:
         name:
@@ -449,6 +532,7 @@ components:
           pattern: '^.*?$'
           minLength: 3
           maxLength: 16
+          description: Describe the name of the user
     ID:
       title: ID
       description: describe an ID
@@ -457,6 +541,10 @@ components:
         identifier:
           type: string
           example: "abcdef012345"
+          minLength: 5
+          maxLength: 100
+          pattern: '^.*?$'
+          description: Describe the ID returned after the login
 security:
   - bearerAuth: []  
   
