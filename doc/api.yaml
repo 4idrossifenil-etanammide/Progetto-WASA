@@ -71,8 +71,6 @@ paths:
             application/json:
               schema:
                  $ref: "#/components/schemas/profile"
-        "404":
-          description: User not found
           
     put:
       tags:
@@ -90,8 +88,6 @@ paths:
       responses:
         "204":
           description: The user_name was successfully changed
-        "404":
-          description: User not found
           
   /profile/{user_name}/banned/{user}:
     parameters:
@@ -141,8 +137,6 @@ paths:
       responses:
         "204":
           description: The unban was successfully.
-        "404":
-          description: User not found.
 
   /profile/{user_name}/followers/{user}:
     parameters:
@@ -192,8 +186,6 @@ paths:
       responses:
         "204":
           description: The unfollow was successfully.
-        "404":
-          description: User not found.
 
   /profile/{user_name}/photos:
     parameters:
@@ -288,8 +280,6 @@ paths:
       responses:
         "204":
           description: The deletion was successfully.
-        "404":
-          description: Photo not found.
 
   /profile/{user_name}/photos/{photo_id}/likes/{user}: 
     parameters:
@@ -339,8 +329,6 @@ paths:
       responses:
         "204":
           description: The photo was liked
-        "404":
-          description: Photo not found
           
     delete:
       tags:
@@ -351,8 +339,6 @@ paths:
       responses:
         "204":
           description: The like deletion was successfully.
-        "404":
-          description: Photo not found.
   
   /profile/{user_name}/photos/{photo_id}/comments: 
     parameters:
@@ -406,10 +392,8 @@ paths:
                   maxLength: 200
                   pattern: '^.*?$'
       responses:
-        "201":
+        "204":
           description: The photo was commented
-        "404":
-          description: Photo not found
           
   /profile/{user_name}/photos/{photo_id}/comments/{user}: 
     parameters:
@@ -452,8 +436,6 @@ paths:
       responses:
         "204":
           description: The comment deletion was successfully.
-        "404":
-          description: Photo not found.
         
 
 components:
