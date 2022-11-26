@@ -240,11 +240,11 @@ paths:
                 type: array
                 items:
                   type: string
-                  format: binary
-                  example: "10100001011110010"
-                  minLength: 20
-                  maxLength: 10000000
+                  example: d732fhh
+                  minLength: 5
+                  maxLength: 100
                   pattern: '^.*?$'
+                  description: The photo represented by its id
                 minItems: 0
                 maxItems: 50
                 description: The photo stream
