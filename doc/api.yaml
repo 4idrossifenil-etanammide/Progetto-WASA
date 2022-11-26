@@ -213,7 +213,7 @@ paths:
             schema:
               type: string
               format: binary
-              example: 0000100100100111000
+              example: "0000100100100111000"
               minLength: 20
               maxLength: 10000000
               pattern: '^.*?$'
@@ -241,7 +241,7 @@ paths:
                 items:
                   type: string
                   format: binary
-                  example: 10100001011110010
+                  example: "10100001011110010"
                   minLength: 20
                   maxLength: 10000000
                   pattern: '^.*?$'
