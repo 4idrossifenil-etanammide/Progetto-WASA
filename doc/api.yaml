@@ -46,7 +46,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ID'
                 
-  /profile/{user_name}:
+  /profiles/{user_name}:
     parameters:
       - name: user_name
         in: path
@@ -89,7 +89,7 @@ paths:
         "204":
           description: The user_name was successfully changed
           
-  /profile/{user_name}/banned/{banned_user}:
+  /profiles/{user_name}/banned/{banned_user}:
     parameters:
       - name: user_name
         in: path
@@ -138,7 +138,7 @@ paths:
         "204":
           description: The unban was successfully.
 
-  /profile/{user_name}/followers/{following}:
+  /profiles/{user_name}/followers/{following}:
     parameters:
       - name: user_name
         in: path
@@ -187,7 +187,7 @@ paths:
         "204":
           description: The unfollow was successfully.
 
-  /profile/{user_name}/photos:
+  /profiles/{user_name}/photos:
     parameters:
       - name: user_name
         in: path
@@ -249,7 +249,7 @@ paths:
                 maxItems: 50
                 description: The photo stream
                 
-  /profile/{user_name}/photos/{photo_id}:
+  /profiles/{user_name}/photos/{photo_id}:
     parameters:
       - name: user_name
         in: path
@@ -281,7 +281,7 @@ paths:
         "204":
           description: The deletion was successfully.
 
-  /profile/{user_name}/photos/{photo_id}/likes/{user_who_likes}: 
+  /profiles/{user_name}/photos/{photo_id}/likes/{user_who_likes}: 
     parameters:
       - name: user_name
         in: path
@@ -340,7 +340,7 @@ paths:
         "204":
           description: The like deletion was successfully.
   
-  /profile/{user_name}/photos/{photo_id}/comments: 
+  /profiles/{user_name}/photos/{photo_id}/comments: 
     parameters:
       - name: user_name
         in: path
@@ -399,7 +399,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/user_name"
           
-  /profile/{user_name}/photos/{photo_id}/comments/{user_who_commented}: 
+  /profiles/{user_name}/photos/{photo_id}/comments/{user_who_commented}: 
     parameters:
       - name: user_name
         in: path
