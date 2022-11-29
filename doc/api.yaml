@@ -392,8 +392,12 @@ paths:
                   maxLength: 200
                   pattern: '^.*?$'
       responses:
-        "204":
+        "201":
           description: The photo was commented
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user_name"
           
   /profile/{user_name}/photos/{photo_id}/comments/{user_who_commented}: 
     parameters:
