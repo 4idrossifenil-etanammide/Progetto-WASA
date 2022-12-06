@@ -71,7 +71,19 @@ paths:
             application/json:
               schema:
                  $ref: "#/components/schemas/profile"
-          
+                 
+  /profiles/{user_name}/name:
+    parameters:
+      - name: user_name
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'      
     put:
       tags:
         - profile
