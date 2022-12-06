@@ -340,7 +340,7 @@ paths:
         "204":
           description: The like deletion was successfully.
   
-  /profiles/{user_name}/photos/{photo_id}/comments/{user_who_commented}: 
+  /profiles/{user_name}/photos/{photo_id}/comments: 
     parameters:
       - name: user_name
         in: path
@@ -362,17 +362,7 @@ paths:
           minLength: 5
           maxLength: 100
           pattern: '^.*?$'
-      - name: user_who_commented
-        in: path
-        description: The name of the user we want to add/remove comment
-        required: true
-        schema:
-          type: string
-          example: Luca 
-          minLength: 3
-          maxLength: 16
-          pattern: '^.*?$'
-    put:
+    post:
       tags:
         - comments
       operationId: commentPhoto
@@ -408,7 +398,39 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/user_name"
-                
+          
+  /profiles/{user_name}/photos/{photo_id}/comments/{user_who_commented}: 
+    parameters:
+      - name: user_name
+        in: path
+        description: Describe the user name
+        required: true
+        schema:
+          type: string
+          example: Maria
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
+      - name: photo_id
+        in: path
+        description: Describe a photo ID
+        required: true
+        schema:
+          type: string
+          example: d732fhh
+          minLength: 5
+          maxLength: 100
+          pattern: '^.*?$'
+      - name: user_who_commented
+        in: path
+        description: The name of the user we want to remove the comment
+        required: true
+        schema:
+          type: string
+          example: Luca 
+          minLength: 3
+          maxLength: 16
+          pattern: '^.*?$'
     delete:
       tags:
         - comments
