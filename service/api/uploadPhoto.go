@@ -26,7 +26,7 @@ func (rt *_router) UploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	var photo Photo
-	dbPhoto, err := rt.db.UploadPhoto(id.Id)
+	dbPhoto, err := rt.db.UploadPhoto(id.Id, "./images/")
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Errore nell'inserimento nel database")
 		w.WriteHeader(http.StatusBadRequest)

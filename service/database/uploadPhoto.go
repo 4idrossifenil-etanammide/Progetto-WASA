@@ -6,11 +6,11 @@ import (
 	"time"
 )
 
-func (db *appdbimpl) UploadPhoto(userId string) (Photo, error) {
+func (db *appdbimpl) UploadPhoto(userId string, path string) (Photo, error) {
 	var photo Photo
 	CreateData(&photo)
 
-	_, err := db.c.Exec(`INSERT INTO Foto (FotoID, Utente, Data, nLikes, nCommenti) VALUES (?, ?, ?, ?, ?)`, photo.PhotoID, userId, photo.Date, photo.LikeNumber, photo.CommentNumber)
+	_, err := db.c.Exec(`INSERT INTO Foto (FotoID, Utente, Data, nLikes, nCommenti, Path) VALUES (?, ?, ?, ?, ?, ?)`, photo.PhotoID, userId, photo.Date, photo.LikeNumber, photo.CommentNumber, path+photo.PhotoID+".jpg")
 	return photo, err
 }
 

@@ -57,7 +57,7 @@ type AppDatabase interface {
 	CheckToken(string, string) error
 	LoginUser(UserName) (ID, error)
 	SetName(string, string) error
-	UploadPhoto(string) (Photo, error)
+	UploadPhoto(string, string) (Photo, error)
 
 	Ping() error
 }
@@ -96,6 +96,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 									Data DATE NOT NULL, 
 									nLikes INTEGER NOT NULL, 
 									nCommenti INTEGER NOT NULL,
+									Path TEXT NOT NULL,
 									CONSTRAINT fk_utente FOREIGN KEY(Utente) REFERENCES Utente(ID) ON DELETE CASCADE ON UPDATE CASCADE,
 									PRIMARY KEY(FotoID, Utente));`)
 	if err != nil {
