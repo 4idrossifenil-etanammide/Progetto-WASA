@@ -45,11 +45,19 @@ type ID struct {
 	Id string `json:"id"`
 }
 
+type Photo struct {
+	PhotoID       string `json:"photoID"`
+	Date          string `json:"date"`
+	LikeNumber    int    `json:"likeNumber"`
+	CommentNumber int    `json:"commentNumber"`
+}
+
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
 	CheckToken(string, string) error
 	LoginUser(UserName) (ID, error)
 	SetName(string, string) error
+	UploadPhoto(string) (Photo, error)
 
 	Ping() error
 }

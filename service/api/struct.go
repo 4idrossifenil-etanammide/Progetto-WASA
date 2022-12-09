@@ -37,3 +37,26 @@ func (i *ID) ToDatabase() database.ID {
 		Id: i.Id,
 	}
 }
+
+type Photo struct {
+	PhotoID       string `json:"photoID"`
+	Date          string `json:"date"`
+	LikeNumber    int    `json:"likeNumber"`
+	CommentNumber int    `json:"commentNumber"`
+}
+
+func (p *Photo) FromDatabase(photo database.Photo) {
+	p.PhotoID = photo.PhotoID
+	p.Date = photo.Date
+	p.CommentNumber = photo.CommentNumber
+	p.LikeNumber = photo.LikeNumber
+}
+
+func (p *Photo) ToDatabase() database.Photo {
+	return database.Photo{
+		PhotoID:       p.PhotoID,
+		Date:          p.Date,
+		LikeNumber:    p.LikeNumber,
+		CommentNumber: p.CommentNumber,
+	}
+}

@@ -16,11 +16,11 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	username := ps.ByName("user_name")
 	var id ID
 	id.Id = strings.Split(r.Header.Get("Authorization"), " ")[1]
 	err = rt.db.CheckToken(id.Id, username)
-	ctx.Logger.Printf("id: '%s', vecchio: %s, nuovo: %s", id.Id, username, user.Name)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Authorization failed!")
 		w.WriteHeader(http.StatusBadRequest)
