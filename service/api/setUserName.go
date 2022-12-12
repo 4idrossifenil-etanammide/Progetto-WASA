@@ -18,6 +18,11 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	username := ps.ByName("user_name")
+
+	if username == user.Name {
+		return
+	}
+
 	var id ID
 	id.Id = strings.Split(r.Header.Get("Authorization"), " ")[1]
 	err = rt.db.CheckToken(id.Id, username)

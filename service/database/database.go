@@ -58,6 +58,10 @@ type AppDatabase interface {
 	LoginUser(UserName) (ID, error)
 	SetName(string, string) error
 	UploadPhoto(string, string) (Photo, error)
+	DeletePhoto(string, string) error
+	LikePhoto(string, string) error
+	BanUser(string, string) error
+	CheckBan(string, string) error
 
 	Ping() error
 }
@@ -103,6 +107,16 @@ func New(db *sql.DB) (AppDatabase, error) {
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}
 
+	/* Questo pezzo di codice serve a far funzionare i vincoli di integrità refernziali.
+	Incredibile come il SQLite permetta di definire tabelle senza chiavi primarie, chiavi primarie con valori nulli (e allora che differenza c'è tra
+	UNIQUE e PRIMARY KEY) o ancora che non abbia i vincoli di integrità referenziali attivati di default (sennò non ti fai chiamare db relazionale) e
+	tante altre cose senza senso, tra cui l'impossibilità di definire foreign keys su valori non UNIQUE o PRIMARY KEYS.
+	*/
+	createUniqueIndex(db, "Foto", "j", "FotoID")
+	if err != nil {
+		return nil, fmt.Errorf("Errore del cavolo perchè sqlite fa schifo, maledetto chi l'ha creato: %w", err)
+	}
+
 	// ==================== CREAZIONE TABELLA LIKE ====================
 
 	err = createTable(db, "Like", `CREATE TABLE Like(
@@ -110,7 +124,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 									FotoReference TEXT NOT NULL, 
 									Utente TEXT NOT NULL, 
 									CONSTRAINT fk_foto FOREIGN KEY(FotoReference) REFERENCES Foto(FotoID) ON DELETE CASCADE ON UPDATE CASCADE, 
-									CONSTRAINT fk_utente FOREIGN KEY(Utente) REFERENCES Utente(ID) ON DELETE CASCADE ON UPDATE CASCADE, 
+									CONSTRAINT fk_utente FOREIGN KEY(Utente) REFERENCES Utente(ID) ON DELETE CASCADE ON UPDATE CASCADE,
 									UNIQUE(FotoReference, Utente));`)
 	if err != nil {
 		return nil, fmt.Errorf("error creating database structure: %w", err)
@@ -165,11 +179,47 @@ func createTable(db *sql.DB, tableName string, query string) error {
 
 	// Check if table exists. If not, the database is empty, and we need to create the structure
 	if errors.Is(err, sql.ErrNoRows) {
+		_, err := db.Exec(query)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func createUniqueIndex(db *sql.DB, tableName string, indexName string, column string) error {
+
+	var seq string
+	var name string
+	var unique string
+	var creationMode string
+	var partialIndex string
+	var createNew bool = true
+
+	query := fmt.Sprintf(`PRAGMA INDEX_LIST(%s);`, tableName)
+	rows, err := db.Query(query)
+	defer rows.Close()
+	if err != nil {
+		return err
+	}
+
+	for rows.Next() {
+		rows.Scan(&seq, &name, &unique, &creationMode, &partialIndex)
+
+		if name == indexName {
+			createNew = false
+		}
+
+	}
+
+	if createNew {
+		query = fmt.Sprintf(`CREATE UNIQUE INDEX %s ON %s(%s)`, indexName, tableName, column)
 		_, err = db.Exec(query)
 		if err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 

@@ -8,6 +8,7 @@ import (
 func (db *appdbimpl) CheckToken(id string, username string) error {
 
 	rows, err := db.c.Query(`SELECT nome FROM Utente WHERE id = ?`, id)
+	defer rows.Close()
 	if err != nil {
 		return err
 	}
