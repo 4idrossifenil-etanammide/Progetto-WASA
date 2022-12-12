@@ -10,6 +10,7 @@ import (
 )
 
 func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	var id ID
 	var user UserName
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -23,7 +24,6 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	var id ID
 	id.Id = strings.Split(r.Header.Get("Authorization"), " ")[1]
 	err = rt.db.CheckToken(id.Id, username)
 	if err != nil {
