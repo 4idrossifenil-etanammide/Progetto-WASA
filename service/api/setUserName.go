@@ -2,39 +2,61 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
 	"wasaphoto.uniroma1.it/wasaphoto/service/api/reqcontext"
+	"wasaphoto.uniroma1.it/wasaphoto/service/database"
 )
 
 func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+
+	// Initialize variables
 	var id ID
-	var user UserName
-	err := json.NewDecoder(r.Body).Decode(&user)
+	var newName UserName
+
+	// Take the name of the user from the body
+	err := json.NewDecoder(r.Body).Decode(&newName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
+	// Take the name of the user from the path
 	username := ps.ByName("user_name")
 
-	if username == user.Name {
-		return
-	}
-
+	// Check the authorization
 	id.Id = strings.Split(r.Header.Get("Authorization"), " ")[1]
 	err = rt.db.CheckToken(id.Id, username)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Authorization failed!")
-		w.WriteHeader(http.StatusBadRequest)
+		if errors.Is(err, database.AuthenticationError) {
+			w.WriteHeader(http.StatusUnauthorized)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		return
 	}
 
-	err = rt.db.SetName(id.Id, user.Name)
-	if err != nil {
+	// If the new name is equal to the name in the path, we don't have to change anything because of idempotency
+	// (The user is trying to put his old name as the new name)
+	if username == newName.Name {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// Finally, it enters the change into the database, checking for errors
+	err = rt.db.SetName(id.Id, newName.Name)
+	if errors.Is(err, database.ChangeNameError) {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	} else if err != nil {
 		ctx.Logger.WithError(err).Error("can't change the name of the user")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

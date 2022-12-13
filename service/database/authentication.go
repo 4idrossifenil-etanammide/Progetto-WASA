@@ -2,13 +2,13 @@ package database
 
 import (
 	"errors"
-	"fmt"
 )
+
+var AuthenticationError = errors.New("L'ID non corrisponde con l'username")
 
 func (db *appdbimpl) CheckToken(id string, username string) error {
 
 	rows, err := db.c.Query(`SELECT nome FROM Utente WHERE id = ?`, id)
-	defer rows.Close()
 	if err != nil {
 		return err
 	}
@@ -23,8 +23,7 @@ func (db *appdbimpl) CheckToken(id string, username string) error {
 	}
 
 	if username != output {
-		errLog := fmt.Sprintf("L'ID non corrisponde con l'username. ID: %s, username: %s", id, output)
-		return errors.New(errLog)
+		return AuthenticationError
 	}
 
 	return nil

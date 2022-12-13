@@ -114,7 +114,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	*/
 	createUniqueIndex(db, "Foto", "j", "FotoID")
 	if err != nil {
-		return nil, fmt.Errorf("Errore del cavolo perchè sqlite fa schifo, maledetto chi l'ha creato: %w", err)
+		return nil, fmt.Errorf("Error creating unique index: %w", err)
 	}
 
 	// ==================== CREAZIONE TABELLA LIKE ====================
@@ -198,13 +198,16 @@ func createUniqueIndex(db *sql.DB, tableName string, indexName string, column st
 
 	query := fmt.Sprintf(`PRAGMA INDEX_LIST(%s);`, tableName)
 	rows, err := db.Query(query)
-	defer rows.Close()
 	if err != nil {
 		return err
 	}
+	defer func() { _ = rows.Close() }()
 
 	for rows.Next() {
-		rows.Scan(&seq, &name, &unique, &creationMode, &partialIndex)
+		err = rows.Scan(&seq, &name, &unique, &creationMode, &partialIndex)
+		if err != nil {
+			return err
+		}
 
 		if name == indexName {
 			createNew = false

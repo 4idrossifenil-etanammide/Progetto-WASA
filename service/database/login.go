@@ -21,11 +21,17 @@ func (db *appdbimpl) LoginUser(u UserName) (ID, error) {
 	if rows.Next() {
 		var id ID
 		err = rows.Scan(&id.Id)
-		return id, err
+		if err != nil {
+			return ID{}, err
+		}
+		return id, nil
 	} else {
 		uniqueID := generateUniqueId(u.Name)
 		_, err := db.c.Exec(`INSERT INTO Utente (id, nome) VALUES (?, ?)`, uniqueID, u.Name)
-		return ID{Id: uniqueID}, err
+		if err != nil {
+			return ID{}, err
+		}
+		return ID{Id: uniqueID}, nil
 	}
 }
 
