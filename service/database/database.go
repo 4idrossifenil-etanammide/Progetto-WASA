@@ -77,6 +77,9 @@ type AppDatabase interface {
 	CommentPhoto(string, Comment) (UserName, error)
 	DeleteComment(string, string) error
 
+	Follow(string, string) error
+	Unfollow(string, string) error
+
 	Ping() error
 }
 
