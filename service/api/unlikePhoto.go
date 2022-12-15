@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 	"strings"
@@ -11,11 +10,10 @@ import (
 	"wasaphoto.uniroma1.it/wasaphoto/service/database"
 )
 
-func (rt *_router) LikePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+func (rt *_router) UnlikePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	// Initialize variable
 	var id ID
-	var user UserName
 
 	// Collect information from the parameters
 	username := ps.ByName("user_name")
@@ -35,21 +33,8 @@ func (rt *_router) LikePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	// Collect the name of the user from the body
-	err = json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	// If the name specified in the body is not equal to the one specified in the parameters, we return an error
-	if user.Name != userLike {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	// Put the information into the database
-	err = rt.db.LikePhoto(photoId, userLike)
+	// Unlike the photo
+	err = rt.db.UnlikePhoto(photoId, userLike)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Operation failed!")
 		w.WriteHeader(http.StatusBadRequest)
@@ -57,5 +42,4 @@ func (rt *_router) LikePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	w.WriteHeader(http.StatusNoContent)
-
 }

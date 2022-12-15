@@ -3,7 +3,7 @@ package database
 import "errors"
 
 // Creation of a custom error for the ban operation
-var BanError = errors.New("The selected user is banned")
+var ErrBan = errors.New("The selected user is banned")
 
 func (db *appdbimpl) CheckBan(userId string, banned_user string) error {
 
@@ -16,7 +16,7 @@ func (db *appdbimpl) CheckBan(userId string, banned_user string) error {
 
 	// If the result is not empty, then the user selected is already banned, so we return an error
 	if rows.Next() {
-		return BanError
+		return ErrBan
 	}
 
 	// Finally, we return nil if everything was fine

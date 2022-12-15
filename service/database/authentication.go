@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-var AuthenticationError = errors.New("L'ID non corrisponde con l'username")
+var ErrAuthentication = errors.New("L'ID non corrisponde con l'username")
 
 func (db *appdbimpl) CheckToken(id string, username string) error {
 
@@ -23,7 +23,7 @@ func (db *appdbimpl) CheckToken(id string, username string) error {
 	}
 
 	if username != output {
-		return AuthenticationError
+		return ErrAuthentication
 	}
 
 	return nil

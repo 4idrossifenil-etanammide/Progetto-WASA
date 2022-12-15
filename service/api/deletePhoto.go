@@ -23,7 +23,7 @@ func (rt *_router) DeletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	err := rt.db.CheckToken(id.Id, username)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Authorization failed!")
-		if errors.Is(err, database.AuthenticationError) {
+		if errors.Is(err, database.ErrAuthentication) {
 			w.WriteHeader(http.StatusUnauthorized)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -34,7 +34,7 @@ func (rt *_router) DeletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	// Delete the photo from the database and check for errors
 	err = rt.db.DeletePhoto(photoId, id.Id)
 
-	if errors.Is(err, database.DeletePhotoError) {
+	if errors.Is(err, database.ErrDeletePhoto) {
 		ctx.Logger.WithError(err).Error("Unauthorized operation")
 		w.WriteHeader(http.StatusForbidden)
 		return

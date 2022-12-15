@@ -25,7 +25,7 @@ func (rt *_router) BanUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	err := rt.db.CheckToken(id.Id, username)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Authorization failed!")
-		if errors.Is(err, database.AuthenticationError) {
+		if errors.Is(err, database.ErrAuthentication) {
 			w.WriteHeader(http.StatusUnauthorized)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)

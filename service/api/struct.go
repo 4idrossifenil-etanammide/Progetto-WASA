@@ -66,3 +66,20 @@ func (p *Photo) ToDatabase() database.Photo {
 		CommentNumber: p.CommentNumber,
 	}
 }
+
+type Comment struct {
+	Name string `json:"name"`
+	Text string `json:"comment"`
+}
+
+func (c *Comment) ToDatabase() database.Comment {
+	return database.Comment{
+		Name: c.Name,
+		Text: c.Text,
+	}
+}
+
+func (c *Comment) FromDatabase(comment database.Comment) {
+	c.Name = comment.Name
+	c.Text = comment.Text
+}

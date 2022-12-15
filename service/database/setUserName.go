@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-var ChangeNameError = errors.New("Username already used by another person")
+var ErrChangeName = errors.New("Username already used by another person")
 
 func (db *appdbimpl) SetName(id string, newUserName string) error {
 
@@ -13,7 +13,6 @@ func (db *appdbimpl) SetName(id string, newUserName string) error {
 	if err != nil {
 		return err
 	}
-	defer func() { _ = rows.Close() }()
 
 	// Check if the new username is already into the database
 	var output string
@@ -24,7 +23,7 @@ func (db *appdbimpl) SetName(id string, newUserName string) error {
 		}
 
 		if output == newUserName {
-			return ChangeNameError
+			return ErrChangeName
 		}
 	}
 

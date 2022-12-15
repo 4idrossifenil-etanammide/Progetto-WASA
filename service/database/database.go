@@ -52,16 +52,30 @@ type Photo struct {
 	CommentNumber int    `json:"commentNumber"`
 }
 
+type Comment struct {
+	Name string `json:"name"`
+	Text string `json:"comment"`
+}
+
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
 	CheckToken(string, string) error
 	LoginUser(UserName) (ID, error)
+
 	SetName(string, string) error
+
 	UploadPhoto(string, string) (Photo, error)
 	DeletePhoto(string, string) error
+
 	LikePhoto(string, string) error
+	UnlikePhoto(string, string) error
+
 	BanUser(string, string) error
+	UnbanUser(string, string) error
 	CheckBan(string, string) error
+
+	CommentPhoto(string, Comment) (UserName, error)
+	DeleteComment(string, string) error
 
 	Ping() error
 }
@@ -138,8 +152,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 										Utente TEXT NOT NULL, 
 										Testo TEXT NOT NULL, 
 										CONSTRAINT fk_foto FOREIGN KEY(FotoReference) REFERENCES Foto(FotoID) ON DELETE CASCADE ON UPDATE CASCADE, 
-										CONSTRAINT fk_utente FOREIGN KEY(Utente) REFERENCES Utente(ID) ON DELETE CASCADE ON UPDATE CASCADE, 
-										UNIQUE(FotoReference, Utente));`)
+										CONSTRAINT fk_utente FOREIGN KEY(Utente) REFERENCES Utente(ID) ON DELETE CASCADE ON UPDATE CASCADE);`)
 	if err != nil {
 		return nil, fmt.Errorf("error creating database structure: %w", err)
 	}

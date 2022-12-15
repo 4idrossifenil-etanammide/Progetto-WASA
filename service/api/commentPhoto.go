@@ -11,16 +11,14 @@ import (
 	"wasaphoto.uniroma1.it/wasaphoto/service/database"
 )
 
-func (rt *_router) LikePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+func (rt *_router) CommentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
-	// Initialize variable
 	var id ID
-	var user UserName
+	var userName UserName
+	var comment Comment
 
-	// Collect information from the parameters
 	username := ps.ByName("user_name")
 	photoId := ps.ByName("photo_id")
-	userLike := ps.ByName("user")
 
 	// Check authorization
 	id.Id = strings.Split(r.Header.Get("Authorization"), " ")[1]
@@ -35,27 +33,23 @@ func (rt *_router) LikePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	// Collect the name of the user from the body
-	err = json.NewDecoder(r.Body).Decode(&user)
+	err = json.NewDecoder(r.Body).Decode(&comment)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	// If the name specified in the body is not equal to the one specified in the parameters, we return an error
-	if user.Name != userLike {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	// Put the information into the database
-	err = rt.db.LikePhoto(photoId, userLike)
+	result, err := rt.db.CommentPhoto(photoId, comment.ToDatabase())
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Operation failed!")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	userName.FromDatabase(result)
+
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(userName)
 
 }

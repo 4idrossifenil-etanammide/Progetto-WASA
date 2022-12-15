@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-var DeletePhotoError = errors.New("You can't delete the photo of another user")
+var ErrDeletePhoto = errors.New("You can't delete the photo of another user")
 
 func (db *appdbimpl) DeletePhoto(photoId string, userId string) error {
 
@@ -13,7 +13,6 @@ func (db *appdbimpl) DeletePhoto(photoId string, userId string) error {
 	if err != nil {
 		return err
 	}
-	defer func() { _ = rows.Close() }()
 
 	// check that the user who wants to delete the photo is the owner
 	var photoOwner string
@@ -24,7 +23,7 @@ func (db *appdbimpl) DeletePhoto(photoId string, userId string) error {
 		}
 
 		if photoOwner != userId {
-			return DeletePhotoError
+			return ErrDeletePhoto
 		}
 	}
 

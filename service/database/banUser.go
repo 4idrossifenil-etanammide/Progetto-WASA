@@ -9,7 +9,6 @@ func (db *appdbimpl) BanUser(userId string, banned_user string) error {
 	if err != nil {
 		return err
 	}
-	defer func() { _ = rows.Close() }()
 
 	// Put the ID in a string
 	var bannedId string
@@ -22,7 +21,7 @@ func (db *appdbimpl) BanUser(userId string, banned_user string) error {
 
 	// Check if the user is not already banned (using the custom error) or if the operation on the database was not succesfully
 	err = db.CheckBan(userId, bannedId)
-	if errors.Is(err, BanError) {
+	if errors.Is(err, ErrBan) {
 		return nil
 	} else if err != nil {
 		return err
