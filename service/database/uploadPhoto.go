@@ -15,7 +15,7 @@ func (db *appdbimpl) UploadPhoto(userId string, path string) (Photo, error) {
 	CreateData(&photo)
 
 	// Put the information into the database
-	_, err := db.c.Exec(`INSERT INTO Foto (FotoID, Utente, Data, nLikes, nCommenti, Path) VALUES (?, ?, ?, ?, ?, ?)`, photo.PhotoID, userId, photo.Date, photo.LikeNumber, photo.CommentNumber, path+photo.PhotoID+".jpg")
+	_, err := db.c.Exec(`INSERT INTO Foto (FotoID, Utente, Data, nLikes, nCommenti, Path) VALUES (?, ?, ?, ?, ?, ?)`, photo.PhotoID, userId, photo.UploadingDate, photo.LikeNumber, photo.CommentNumber, path+photo.PhotoID+".jpg")
 	if err != nil {
 		return Photo{}, err
 	}
@@ -27,8 +27,8 @@ func CreateData(photoStruct *Photo) {
 
 	// Creation of the unique ID and insertion of the date
 	h := fnv.New32a()
-	photoStruct.Date = time.Now().String()
-	h.Write([]byte(photoStruct.Date))
+	photoStruct.UploadingDate = time.Now().Format("02-01-2006 15:04:05")
+	h.Write([]byte(photoStruct.UploadingDate))
 
 	// Put the info into the struct
 	photoStruct.PhotoID = strconv.Itoa(int(h.Sum32()))

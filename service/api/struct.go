@@ -46,14 +46,14 @@ func (i *ID) ToDatabase() database.ID {
 // Struct to collect information about a photo, same as above
 type Photo struct {
 	PhotoID       string `json:"photoID"`
-	Date          string `json:"date"`
+	UploadingDate string `json:"date"`
 	LikeNumber    int    `json:"likeNumber"`
 	CommentNumber int    `json:"commentNumber"`
 }
 
 func (p *Photo) FromDatabase(photo database.Photo) {
 	p.PhotoID = photo.PhotoID
-	p.Date = photo.Date
+	p.UploadingDate = photo.UploadingDate
 	p.CommentNumber = photo.CommentNumber
 	p.LikeNumber = photo.LikeNumber
 }
@@ -61,7 +61,7 @@ func (p *Photo) FromDatabase(photo database.Photo) {
 func (p *Photo) ToDatabase() database.Photo {
 	return database.Photo{
 		PhotoID:       p.PhotoID,
-		Date:          p.Date,
+		UploadingDate: p.UploadingDate,
 		LikeNumber:    p.LikeNumber,
 		CommentNumber: p.CommentNumber,
 	}
@@ -82,4 +82,45 @@ func (c *Comment) ToDatabase() database.Comment {
 func (c *Comment) FromDatabase(comment database.Comment) {
 	c.Name = comment.Name
 	c.Text = comment.Text
+}
+
+type Stream struct {
+	Photos []Photo `json:"photos"`
+}
+
+func (s *Stream) FromDatabase(stream database.Stream) {
+	var tmpPhoto Photo
+	for _, photo := range stream.Photos {
+		tmpPhoto.FromDatabase(photo)
+		s.Photos = append(s.Photos, tmpPhoto)
+	}
+}
+
+type Profile struct {
+	Photos      []Photo
+	PhotoNumber int
+	Follower    []UserName
+	Following   []UserName
+}
+
+func (p *Profile) FromDatabase(profile database.Profile) {
+	var tmpPhoto Photo
+	for _, photo := range profile.Photos {
+		tmpPhoto.FromDatabase(photo)
+		p.Photos = append(p.Photos, tmpPhoto)
+	}
+
+	p.PhotoNumber = profile.PhotoNumber
+
+	var tmpFollower UserName
+	for _, username := range profile.Follower {
+		tmpFollower.FromDatabase(username)
+		p.Follower = append(p.Follower, tmpFollower)
+	}
+
+	var tmpFollowing UserName
+	for _, username := range profile.Following {
+		tmpFollowing.FromDatabase(username)
+		p.Following = append(p.Following, tmpFollowing)
+	}
 }

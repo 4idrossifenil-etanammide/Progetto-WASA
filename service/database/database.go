@@ -47,7 +47,7 @@ type ID struct {
 
 type Photo struct {
 	PhotoID       string `json:"photoID"`
-	Date          string `json:"date"`
+	UploadingDate string `json:"date"`
 	LikeNumber    int    `json:"likeNumber"`
 	CommentNumber int    `json:"commentNumber"`
 }
@@ -55,6 +55,17 @@ type Photo struct {
 type Comment struct {
 	Name string `json:"name"`
 	Text string `json:"comment"`
+}
+
+type Profile struct {
+	Photos      []Photo
+	PhotoNumber int
+	Follower    []UserName
+	Following   []UserName
+}
+
+type Stream struct {
+	Photos []Photo `json:"photos"`
 }
 
 // AppDatabase is the high level interface for the DB
@@ -79,6 +90,9 @@ type AppDatabase interface {
 
 	Follow(string, string) error
 	Unfollow(string, string) error
+
+	GetStream(string) (Stream, error)
+	GetProfile(string, string) (Profile, error)
 
 	Ping() error
 }
@@ -114,7 +128,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	err = createTable(db, "Foto", `CREATE TABLE Foto(
 									FotoID TEXT NOT NULL,
 									Utente TEXT NOT NULL,
-									Data DATE NOT NULL, 
+									Data TEXT NOT NULL, 
 									nLikes INTEGER NOT NULL, 
 									nCommenti INTEGER NOT NULL,
 									Path TEXT NOT NULL,
