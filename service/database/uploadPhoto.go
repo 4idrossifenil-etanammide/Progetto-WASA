@@ -27,8 +27,8 @@ func CreateData(photoStruct *Photo) {
 
 	// Creation of the unique ID and insertion of the date
 	h := fnv.New32a()
-	photoStruct.UploadingDate = time.Now().Format("02-01-2006 15:04:05")
-	h.Write([]byte(photoStruct.UploadingDate))
+	photoStruct.UploadingDate = time.Now()
+	h.Write([]byte(photoStruct.UploadingDate.Format("02-01-2006 15:04:05")))
 
 	// Put the info into the struct
 	photoStruct.PhotoID = strconv.Itoa(int(h.Sum32()))

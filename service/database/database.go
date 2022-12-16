@@ -34,6 +34,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 )
 
 // Struct che verranno usate nelle operazioni per il db
@@ -46,10 +47,10 @@ type ID struct {
 }
 
 type Photo struct {
-	PhotoID       string `json:"photoID"`
-	UploadingDate string `json:"date"`
-	LikeNumber    int    `json:"likeNumber"`
-	CommentNumber int    `json:"commentNumber"`
+	PhotoID       string    `json:"photoID"`
+	UploadingDate time.Time `json:"date"`
+	LikeNumber    int       `json:"likeNumber"`
+	CommentNumber int       `json:"commentNumber"`
 }
 
 type Comment struct {
@@ -128,7 +129,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	err = createTable(db, "Foto", `CREATE TABLE Foto(
 									FotoID TEXT NOT NULL,
 									Utente TEXT NOT NULL,
-									Data TEXT NOT NULL, 
+									Data DATE NOT NULL, 
 									nLikes INTEGER NOT NULL, 
 									nCommenti INTEGER NOT NULL,
 									Path TEXT NOT NULL,

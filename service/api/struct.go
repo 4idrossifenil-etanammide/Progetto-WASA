@@ -1,6 +1,10 @@
 package api
 
-import "wasaphoto.uniroma1.it/wasaphoto/service/database"
+import (
+	"time"
+
+	"wasaphoto.uniroma1.it/wasaphoto/service/database"
+)
 
 // Struct for collecting information about a username
 type UserName struct {
@@ -45,10 +49,10 @@ func (i *ID) ToDatabase() database.ID {
 
 // Struct to collect information about a photo, same as above
 type Photo struct {
-	PhotoID       string `json:"photoID"`
-	UploadingDate string `json:"date"`
-	LikeNumber    int    `json:"likeNumber"`
-	CommentNumber int    `json:"commentNumber"`
+	PhotoID       string    `json:"photoID"`
+	UploadingDate time.Time `json:"date"`
+	LikeNumber    int       `json:"likeNumber"`
+	CommentNumber int       `json:"commentNumber"`
 }
 
 func (p *Photo) FromDatabase(photo database.Photo) {

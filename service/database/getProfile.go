@@ -1,5 +1,7 @@
 package database
 
+import "sort"
+
 func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, error) {
 
 	var profile Profile
@@ -71,6 +73,10 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 		profile.Following = append(profile.Following, tmpFollowing)
 	}
 	rows.Close()
+
+	sort.Slice(profile.Photos, func(i, j int) bool {
+		return profile.Photos[i].UploadingDate.Before(profile.Photos[j].UploadingDate)
+	})
 
 	return profile, nil
 }

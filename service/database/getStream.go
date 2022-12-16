@@ -1,5 +1,9 @@
 package database
 
+import (
+	"sort"
+)
+
 func (db *appdbimpl) GetStream(userId string) (Stream, error) {
 
 	var stream Stream
@@ -17,6 +21,10 @@ func (db *appdbimpl) GetStream(userId string) (Stream, error) {
 		}
 
 		stream.Photos = append(stream.Photos, tmp)
+
+		sort.Slice(stream.Photos, func(i, j int) bool {
+			return stream.Photos[i].UploadingDate.Before(stream.Photos[j].UploadingDate)
+		})
 	}
 
 	return stream, nil
