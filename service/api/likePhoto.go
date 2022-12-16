@@ -18,13 +18,13 @@ func (rt *_router) LikePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	var user UserName
 
 	// Collect information from the parameters
-	username := ps.ByName("user_name")
 	photoId := ps.ByName("photo_id")
 	userLike := ps.ByName("user")
 
-	// Check authorization
+	// Check authorization, in this case we check if the person who want to like
+	// have the right to do so
 	id.Id = strings.Split(r.Header.Get("Authorization"), " ")[1]
-	err := rt.db.CheckToken(id.Id, username)
+	err := rt.db.CheckToken(id.Id, userLike)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Authorization failed!")
 		if errors.Is(err, database.ErrAuthentication) {

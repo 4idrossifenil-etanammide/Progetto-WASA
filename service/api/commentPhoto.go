@@ -17,12 +17,18 @@ func (rt *_router) CommentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	var userName UserName
 	var comment Comment
 
-	username := ps.ByName("user_name")
 	photoId := ps.ByName("photo_id")
 
-	// Check authorization
+	err := json.NewDecoder(r.Body).Decode(&comment)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Check authorization, in this case we check the that the user who want to comment have
+	// the right to do so
 	id.Id = strings.Split(r.Header.Get("Authorization"), " ")[1]
-	err := rt.db.CheckToken(id.Id, username)
+	err = rt.db.CheckToken(id.Id, comment.Name)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Authorization failed!")
 		if errors.Is(err, database.ErrAuthentication) {
@@ -30,12 +36,6 @@ func (rt *_router) CommentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-		return
-	}
-
-	err = json.NewDecoder(r.Body).Decode(&comment)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 

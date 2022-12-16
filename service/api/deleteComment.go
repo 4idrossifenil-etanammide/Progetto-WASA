@@ -14,13 +14,13 @@ func (rt *_router) DeleteComment(w http.ResponseWriter, r *http.Request, ps http
 
 	var id ID
 
-	username := ps.ByName("user_name")
 	userComment := ps.ByName("user")
 	photoId := ps.ByName("photo_id")
 
-	// Check authorization
+	// Check authorization, in this case we have to check the authorization for the
+	// user who commented
 	id.Id = strings.Split(r.Header.Get("Authorization"), " ")[1]
-	err := rt.db.CheckToken(id.Id, username)
+	err := rt.db.CheckToken(id.Id, userComment)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Authorization failed!")
 		if errors.Is(err, database.ErrAuthentication) {
