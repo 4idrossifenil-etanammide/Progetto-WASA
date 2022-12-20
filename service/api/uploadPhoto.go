@@ -37,7 +37,12 @@ func (rt *_router) UploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// If the folder where we want to insert the photos does not exist, we create it
 	if _, err := os.Stat("./images"); os.IsNotExist(err) {
-		_ = os.Mkdir("images", os.ModePerm)
+		err = os.Mkdir("images", os.ModePerm)
+		if err != nil {
+			ctx.Logger.WithError(err).Error("Unable to create the folder /images/")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	} else if err != nil {
 		ctx.Logger.WithError(err).Error("Unable to create the folder /images/")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -56,7 +61,12 @@ func (rt *_router) UploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.FromDatabase(dbPhoto)
 
 	// Put the image into the folder
-	file, _ := os.Create("./images/" + photo.PhotoID + ".jpg")
+	file, err := os.Create("./images/" + photo.PhotoID + ".jpg")
+	if err != nil {
+		ctx.Logger.WithError(err).Error("Errore nella lettura dell'immagine")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	_, err = io.Copy(file, r.Body)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Errore nella lettura dell'immagine")
