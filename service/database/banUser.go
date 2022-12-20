@@ -9,6 +9,7 @@ func (db *appdbimpl) BanUser(userId string, banned_user string) error {
 	if err != nil {
 		return err
 	}
+	defer func() { _ = rows.Close() }()
 
 	// Put the ID in a string
 	var bannedId string
@@ -17,6 +18,9 @@ func (db *appdbimpl) BanUser(userId string, banned_user string) error {
 		if err != nil {
 			return err
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return err
 	}
 
 	// Check if the user is not already banned (using the custom error) or if the operation on the database was not succesfully
@@ -28,7 +32,6 @@ func (db *appdbimpl) BanUser(userId string, banned_user string) error {
 	}
 
 	// Insert the information on the ban
-	rows.Close() // -> Required, otherwise the database remains locked
 	_, err = db.c.Exec(`INSERT INTO Ban(Utente, Bannato) VALUES (?,?);`, userId, bannedId)
 	if err != nil {
 		return err

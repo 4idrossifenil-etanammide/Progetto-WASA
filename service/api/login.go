@@ -33,6 +33,7 @@ func (rt *_router) DoLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	id.FromDatabase(dbUserId)
 
 	// Send the output to the user.
+	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(id)
 }

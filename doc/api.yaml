@@ -45,6 +45,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ID'
+        '400': { $ref: "#/components/responses/BadRequest" }
+        '500': { $ref: "#/components/responses/InternalServerError" }
                 
   /profiles/{user_name}:
     parameters:
@@ -71,6 +73,7 @@ paths:
             application/json:
               schema:
                  $ref: "#/components/schemas/profile"
+        "400": { $ref: "#/components/responses/BadRequest" }
                  
   /profiles/{user_name}/name:
     parameters:
@@ -98,8 +101,13 @@ paths:
             schema:
               $ref: '#/components/schemas/user_name'
       responses:
+        "200":
+          description: The operation was successful
         "204":
           description: The user_name was successfully changed
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
           
   /profiles/{user_name}/banned/{banned_user}:
     parameters:
@@ -139,6 +147,9 @@ paths:
       responses:
         "204":
           description: A user has been banned
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
           
     delete:
       tags:
@@ -149,6 +160,8 @@ paths:
       responses:
         "204":
           description: The unban was successfully.
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
 
   /profiles/{user_name}/followers/{following}:
     parameters:
@@ -188,6 +201,9 @@ paths:
       responses:
         "204":
           description: A new follower has been added
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
                 
     delete:
       tags:
@@ -198,6 +214,9 @@ paths:
       responses:
         "204":
           description: The unfollow was successfully.
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
 
   /profiles/{user_name}/photos:
     parameters:
@@ -237,6 +256,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/photo"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
     get:
       tags:
         - photo
@@ -255,6 +276,9 @@ paths:
                 minItems: 0
                 maxItems: 50
                 description: The photo stream
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
                 
   /profiles/{user_name}/photos/{photo_id}:
     parameters:
@@ -287,6 +311,9 @@ paths:
       responses:
         "204":
           description: The deletion was successfully.
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
 
   /profiles/{user_name}/photos/{photo_id}/likes/{user_who_likes}: 
     parameters:
@@ -336,6 +363,9 @@ paths:
       responses:
         "204":
           description: The photo was liked
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
           
     delete:
       tags:
@@ -346,6 +376,9 @@ paths:
       responses:
         "204":
           description: The like deletion was successfully.
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
   
   /profiles/{user_name}/photos/{photo_id}/comments: 
     parameters:
@@ -405,6 +438,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/user_name"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
           
   /profiles/{user_name}/photos/{photo_id}/comments/{user_who_commented}: 
     parameters:
@@ -447,6 +483,9 @@ paths:
       responses:
         "204":
           description: The comment deletion was successfully.
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
         
 
 components:
@@ -455,6 +494,15 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT 
+  responses:
+    BadRequest:
+      description: The request was not complaint with the documentation
+    InternalServerError:
+      description: The server encountered an internal error
+    Unauthorized:
+      description: You do not have permission to do this operation
+    Forbidden:
+      description: You cannot do this operation
   schemas:
     profile:
       title: profile
