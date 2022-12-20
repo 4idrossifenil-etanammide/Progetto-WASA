@@ -25,14 +25,16 @@ func (db *appdbimpl) LoginUser(u UserName) (ID, error) {
 			return ID{}, err
 		}
 		return id, nil
-	} else {
-		uniqueID := generateUniqueId(u.Name)
-		_, err := db.c.Exec(`INSERT INTO Utente (id, nome) VALUES (?, ?)`, uniqueID, u.Name)
-		if err != nil {
-			return ID{}, err
-		}
-		return ID{Id: uniqueID}, nil
 	}
+	if err := rows.Err(); err != nil {
+		return ID{}, err
+	}
+	uniqueID := generateUniqueId(u.Name)
+	_, err = db.c.Exec(`INSERT INTO Utente (id, nome) VALUES (?, ?)`, uniqueID, u.Name)
+	if err != nil {
+		return ID{}, err
+	}
+	return ID{Id: uniqueID}, nil
 }
 
 func generateUniqueId(name string) string {

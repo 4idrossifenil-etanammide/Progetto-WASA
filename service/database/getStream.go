@@ -26,6 +26,9 @@ func (db *appdbimpl) GetStream(userId string) (Stream, error) {
 			return stream.Photos[i].UploadingDate.Before(stream.Photos[j].UploadingDate)
 		})
 	}
+	if err := rows.Err(); err != nil {
+		return Stream{}, err
+	}
 
 	return stream, nil
 }

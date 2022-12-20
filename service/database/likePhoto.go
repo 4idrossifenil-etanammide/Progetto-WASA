@@ -26,6 +26,9 @@ func (db *appdbimpl) LikePhoto(photoId string, user string) error {
 	} else {
 		return ErrPhoto
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 	rows.Close() // -> Required, otherwise the database remains locked
 
 	// Collect the ID of the user who want to like
@@ -42,6 +45,10 @@ func (db *appdbimpl) LikePhoto(photoId string, user string) error {
 	} else {
 		return ErrUserDoesntExist
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
 	rows.Close() // -> Required, otherwise the database remains locked
 	rows, err = db.c.Query(`SELECT * FROM Like WHERE FotoReference = ? AND Utente = ?`, photoId, userId)
 	if err != nil {
@@ -49,6 +56,9 @@ func (db *appdbimpl) LikePhoto(photoId string, user string) error {
 	}
 	if rows.Next() {
 		return nil
+	}
+	if err := rows.Err(); err != nil {
+		return err
 	}
 
 	rows.Close() // -> Required, otherwise the database remains locked

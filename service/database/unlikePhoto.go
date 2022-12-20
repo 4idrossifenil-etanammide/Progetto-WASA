@@ -13,6 +13,9 @@ func (db *appdbimpl) UnlikePhoto(photoId string, user string) error {
 	if !rows.Next() {
 		return ErrPhoto
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 
 	// Collect the ID of the user who want to unlike
 	rows1, err := db.c.Query(`SELECT ID FROM Utente WHERE Nome = ?`, user)
@@ -27,6 +30,9 @@ func (db *appdbimpl) UnlikePhoto(photoId string, user string) error {
 		}
 	} else {
 		return ErrUserDoesntExist
+	}
+	if err := rows.Err(); err != nil {
+		return err
 	}
 
 	/*

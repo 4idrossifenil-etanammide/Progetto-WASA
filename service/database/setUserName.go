@@ -26,6 +26,9 @@ func (db *appdbimpl) SetName(id string, newUserName string) error {
 			return ErrChangeName
 		}
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 
 	// Put the information into the table
 	rows.Close() // -> Required, otherwise the database remains locked

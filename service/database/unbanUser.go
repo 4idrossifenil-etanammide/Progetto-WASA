@@ -16,6 +16,9 @@ func (db *appdbimpl) UnbanUser(userId string, banned_user string) error {
 			return err
 		}
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 
 	// Insert the information on the unban
 	rows.Close() // -> Required, otherwise the database remains locked

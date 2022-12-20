@@ -9,6 +9,9 @@ func (db *appdbimpl) CommentPhoto(photoId string, comment Comment) (UserName, er
 	if !rows.Next() {
 		return UserName{}, ErrPhoto
 	}
+	if err := rows.Err(); err != nil {
+		return UserName{}, err
+	}
 
 	rows.Close()
 	rows, err = db.c.Query(`SELECT ID FROM Utente WHERE Nome = ?`, comment.Name)
@@ -22,6 +25,9 @@ func (db *appdbimpl) CommentPhoto(photoId string, comment Comment) (UserName, er
 		if err != nil {
 			return UserName{}, err
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return UserName{}, err
 	}
 
 	rows.Close()

@@ -19,6 +19,9 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 	} else {
 		return Profile{}, ErrUserDoesntExist
 	}
+	if err := rows.Err(); err != nil {
+		return Profile{}, err
+	}
 
 	err = db.CheckBan(userId, profileId)
 	if err != nil {
@@ -40,6 +43,9 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 
 		profile.Photos = append(profile.Photos, tmpPhoto)
 	}
+	if err := rows.Err(); err != nil {
+		return Profile{}, err
+	}
 
 	rows.Close()
 	rows, err = db.c.Query(`SELECT Nome FROM Utente WHERE ID IN (SELECT Follower FROM Segue WHERE Utente = ?);`, profileId)
@@ -56,6 +62,9 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 
 		profile.Follower = append(profile.Follower, tmpFollower)
 	}
+	if err := rows.Err(); err != nil {
+		return Profile{}, err
+	}
 
 	rows.Close()
 	rows, err = db.c.Query(`SELECT Nome FROM Utente WHERE ID IN (SELECT Utente FROM Segue WHERE Follower = ?);`, profileId)
@@ -71,6 +80,9 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 		}
 
 		profile.Following = append(profile.Following, tmpFollowing)
+	}
+	if err := rows.Err(); err != nil {
+		return Profile{}, err
 	}
 	rows.Close()
 

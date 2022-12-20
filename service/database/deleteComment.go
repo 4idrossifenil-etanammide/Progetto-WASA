@@ -15,6 +15,9 @@ func (db *appdbimpl) DeleteComment(photoId string, userComment string) error {
 	if !rows.Next() {
 		return ErrPhoto
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 
 	rows.Close()
 	rows, err = db.c.Query(`SELECT ID FROM Utente WHERE Nome = ?`, userComment)
@@ -28,6 +31,9 @@ func (db *appdbimpl) DeleteComment(photoId string, userComment string) error {
 		if err != nil {
 			return err
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return err
 	}
 
 	rows.Close()

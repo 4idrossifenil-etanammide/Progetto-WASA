@@ -15,6 +15,9 @@ func (db *appdbimpl) Unfollow(userId string, follower string) error {
 			return err
 		}
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 
 	rows.Close() // -> Required, otherwise the database remains locked
 	_, err = db.c.Exec(`DELETE FROM Segue WHERE Utente = ? AND Follower = ?`, userId, followerId)

@@ -26,6 +26,9 @@ func (db *appdbimpl) DeletePhoto(photoId string, userId string) error {
 			return ErrDeletePhoto
 		}
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 
 	// Delete the photo
 	rows.Close() // -> Required, otherwise the database remains locked

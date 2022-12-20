@@ -21,6 +21,9 @@ func (db *appdbimpl) CheckToken(id string, username string) error {
 			return err
 		}
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 
 	if username != output {
 		return ErrAuthentication

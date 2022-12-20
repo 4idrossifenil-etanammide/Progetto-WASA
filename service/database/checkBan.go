@@ -18,6 +18,9 @@ func (db *appdbimpl) CheckBan(userId string, banned_user string) error {
 	if rows.Next() {
 		return ErrBan
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 
 	// Finally, we return nil if everything was fine
 	return nil

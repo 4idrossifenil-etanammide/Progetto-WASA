@@ -15,6 +15,9 @@ func (db *appdbimpl) Follow(userId string, follower string) error {
 			return err
 		}
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 
 	rows.Close()
 	rows, err = db.c.Query(`SELECT * FROM Segue WHERE Utente = ? AND Follower = ?`, userId, followerId)
@@ -23,6 +26,9 @@ func (db *appdbimpl) Follow(userId string, follower string) error {
 	}
 	if rows.Next() {
 		return nil
+	}
+	if err := rows.Err(); err != nil {
+		return err
 	}
 
 	// Check if the user is not banned

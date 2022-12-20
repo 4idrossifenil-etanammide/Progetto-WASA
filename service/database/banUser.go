@@ -34,6 +34,6 @@ func (db *appdbimpl) BanUser(userId string, banned_user string) error {
 		return err
 	}
 
-	//Return nil if everythin is fine
+	// Return nil if everythin is fine
 	return nil
 }
