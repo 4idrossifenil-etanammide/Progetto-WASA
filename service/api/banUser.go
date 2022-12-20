@@ -20,7 +20,7 @@ func (rt *_router) BanUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	banned_user := ps.ByName("banned_user")
 	username := ps.ByName("user_name")
 
-	//Check Authorization
+	// Check Authorization
 	id.Id = strings.Split(r.Header.Get("Authorization"), " ")[1]
 	err := rt.db.CheckToken(id.Id, username)
 	if err != nil {

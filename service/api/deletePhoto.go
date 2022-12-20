@@ -11,7 +11,7 @@ import (
 )
 
 func (rt *_router) DeletePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	//Initialize the variable
+	// Initialize the variable
 	var id ID
 
 	// Collect info from the parameters

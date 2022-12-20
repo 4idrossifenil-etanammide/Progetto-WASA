@@ -26,10 +26,6 @@ func (u *UserName) ToDatabase() database.UserName {
 // Thi method check if the username is valid
 func (u *UserName) ValidUserName() bool {
 	return len(u.Name) >= 3 && len(u.Name) <= 16
-	/*
-		TODO: Implementare il check sulla regex implmentata nel file api.yaml
-			  Per ora ancora non sono riuscito a tradurre la regex dallo standard di swaggere a quello del Go
-	*/
 }
 
 // Same as above, but with the struct for the Id
