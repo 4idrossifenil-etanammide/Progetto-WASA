@@ -18,16 +18,18 @@ func (db *appdbimpl) LikePhoto(photoId string, user string) error {
 	}
 
 	// Check and collect info about the owner of the photo
-	if rows.Next() {
+	isNotEmpty := rows.Next()
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	if isNotEmpty {
 		err = rows.Scan(&photoOwner)
 		if err != nil {
 			return err
 		}
 	} else {
 		return ErrPhoto
-	}
-	if err := rows.Err(); err != nil {
-		return err
 	}
 	rows.Close() // -> Required, otherwise the database remains locked
 
@@ -37,16 +39,18 @@ func (db *appdbimpl) LikePhoto(photoId string, user string) error {
 		return err
 	}
 
-	if rows.Next() {
+	isNotEmpty = rows.Next()
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	if isNotEmpty {
 		err = rows.Scan(&userId)
 		if err != nil {
 			return err
 		}
 	} else {
 		return ErrUserDoesntExist
-	}
-	if err := rows.Err(); err != nil {
-		return err
 	}
 
 	rows.Close() // -> Required, otherwise the database remains locked

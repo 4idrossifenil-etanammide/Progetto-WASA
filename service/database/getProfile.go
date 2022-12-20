@@ -11,16 +11,19 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 	if err != nil {
 		return Profile{}, err
 	}
-	if rows.Next() {
+
+	isNotEmpty := rows.Next()
+	if err := rows.Err(); err != nil {
+		return Profile{}, err
+	}
+
+	if isNotEmpty {
 		err = rows.Scan(&profileId)
 		if err != nil {
 			return Profile{}, err
 		}
 	} else {
 		return Profile{}, ErrUserDoesntExist
-	}
-	if err := rows.Err(); err != nil {
-		return Profile{}, err
 	}
 
 	err = db.CheckBan(userId, profileId)
