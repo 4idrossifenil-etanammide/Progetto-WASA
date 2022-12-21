@@ -43,7 +43,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	// If the new name is equal to the name in the path, we don't have to change anything because of idempotency
 	// (The user is trying to put his old name as the new name)
 	if username == newName.Name {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
