@@ -23,16 +23,18 @@ func (db *appdbimpl) UnlikePhoto(photoId string, user string) error {
 		return err
 	}
 
-	if rows1.Next() {
+	isNotEmpty := rows1.Next()
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	if isNotEmpty {
 		err = rows1.Scan(&userId)
 		if err != nil {
 			return err
 		}
 	} else {
 		return ErrUserDoesntExist
-	}
-	if err := rows.Err(); err != nil {
-		return err
 	}
 
 	/*

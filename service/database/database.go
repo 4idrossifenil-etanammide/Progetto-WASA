@@ -141,10 +141,10 @@ func New(db *sql.DB) (AppDatabase, error) {
 
 	/* Questo pezzo di codice serve a far funzionare i vincoli di integrità refernziali.
 	Incredibile come il SQLite permetta di definire tabelle senza chiavi primarie, chiavi primarie con valori nulli (e allora che differenza c'è tra
-	UNIQUE e PRIMARY KEY) o ancora che non abbia i vincoli di integrità referenziali attivati di default (sennò non ti fai chiamare db relazionale) e
+	UNIQUE e PRIMARY KEY) o ancora che non abbia i vincoli di integrità referenziali attivati di default e
 	tante altre cose senza senso, tra cui l'impossibilità di definire foreign keys su valori non UNIQUE o PRIMARY KEYS.
 	*/
-	createUniqueIndex(db, "Foto", "j", "FotoID")
+	err = createUniqueIndex(db, "Foto", "j", "FotoID")
 	if err != nil {
 		return nil, fmt.Errorf("Error creating unique index: %w", err)
 	}
