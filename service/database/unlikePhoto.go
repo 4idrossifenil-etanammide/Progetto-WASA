@@ -24,7 +24,7 @@ func (db *appdbimpl) UnlikePhoto(photoId string, user string) error {
 	}
 
 	isNotEmpty := rows1.Next()
-	if err := rows.Err(); err != nil {
+	if err := rows1.Err(); err != nil {
 		return err
 	}
 
