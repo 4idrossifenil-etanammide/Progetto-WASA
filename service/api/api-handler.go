@@ -29,6 +29,8 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.GET("/profiles/:user_name/photos", rt.wrap(rt.GetStream))
 	rt.router.GET("/profiles/:user_name", rt.wrap(rt.GetProfile))
 
+	rt.router.GET("/profiles/:user_name/photos/:photo_id", rt.wrap(rt.GetPhoto))
+
 	// Special routes
 	rt.router.GET("/liveness", rt.liveness)
 

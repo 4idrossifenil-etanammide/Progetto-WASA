@@ -36,8 +36,8 @@ func (rt *_router) UploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// If the folder where we want to insert the photos does not exist, we create it
-	if _, err := os.Stat("./images"); os.IsNotExist(err) {
-		err = os.Mkdir("images", os.ModePerm)
+	if _, err := os.Stat("/tmp/images"); os.IsNotExist(err) {
+		err = os.Mkdir("/tmp/images", os.ModePerm)
 		if err != nil {
 			ctx.Logger.WithError(err).Error("Unable to create the folder /images/")
 			w.WriteHeader(http.StatusInternalServerError)
@@ -50,7 +50,7 @@ func (rt *_router) UploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// Insert the info into the database, using the id of the user and the path to the folder where we store the images
-	dbPhoto, err := rt.db.UploadPhoto(id.Id, "./images/")
+	dbPhoto, err := rt.db.UploadPhoto(id.Id, "/tmp/images/")
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Error when inserting on database")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -61,7 +61,7 @@ func (rt *_router) UploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.FromDatabase(dbPhoto)
 
 	// Put the image into the folder
-	file, err := os.Create("./images/" + photo.PhotoID + ".jpg")
+	file, err := os.Create("/tmp/images/" + photo.PhotoID + ".png")
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Errore nella lettura dell'immagine")
 		w.WriteHeader(http.StatusInternalServerError)

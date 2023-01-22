@@ -207,9 +207,6 @@ func New(db *sql.DB) (AppDatabase, error) {
 func createTable(db *sql.DB, tableName string, query string) error {
 	initialQuery := fmt.Sprintf(`SELECT name FROM sqlite_master WHERE type='table' AND name='%s';`, tableName)
 	err := db.QueryRow(initialQuery).Scan(&tableName)
-	if err != nil {
-		return err
-	}
 
 	// Check if table exists. If not, the database is empty, and we need to create the structure
 	if errors.Is(err, sql.ErrNoRows) {
@@ -217,6 +214,8 @@ func createTable(db *sql.DB, tableName string, query string) error {
 		if err != nil {
 			return err
 		}
+	} else {
+		return err
 	}
 	return nil
 }

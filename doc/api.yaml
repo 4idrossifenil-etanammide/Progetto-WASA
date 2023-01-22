@@ -312,6 +312,25 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
         "500": { $ref: "#/components/responses/InternalServerError" }
+    get:
+      tags:
+        - photo
+      operationId: getPhoto
+      summary: get a single photo
+      description: Allows you to get a single photo
+      responses:
+        "200":
+          description: Return the photo
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+                example: "0000100100100111000101001110111000101010001110101"
+                minLength: 20
+                maxLength: 10000000
+                pattern: '^.*?$'
+                description: The photo the user want
 
   /profiles/{user_name}/photos/{photo_id}/likes/{user_who_likes}: 
     parameters:
