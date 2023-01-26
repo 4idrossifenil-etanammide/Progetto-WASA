@@ -1,4 +1,28 @@
 <script>
+
+export default {
+    data: function() {
+        return{
+            photoURL: __API_URL__ + "/tmp/images/",
+            photos: [],
+            prova: "http://localhost:3000/profiles/Stefano/photos/202820850"
+        }
+    },
+    mounted() {
+        this.caricaFoto();
+    },
+    methods: {
+        async caricaFoto() {
+            try{
+                const response = await this.$axios.get("/profiles/" + localStorage.getItem("name") + "/photos")
+                let data = response.data["photos"]
+                for (let i = 0; i<data.length; i++) {
+                    this.photos.push(photoURL + data[i]["photoID"] + ".png")
+                }
+            } catch (e) {}
+        },
+    }
+}
 </script>
 
 <template>
@@ -6,6 +30,7 @@
         <div class="header">
             <h1 class="title">WasaPHOTO</h1>
         </div>
+        <img :src="prova">
         <div class="footer">
             <button>Bottone 1</button>
             <button>Bottone 2</button>

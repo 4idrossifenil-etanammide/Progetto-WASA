@@ -18,9 +18,10 @@ export default {
 				})
 				this.response = identifier.data;
 				localStorage.setItem("token", this.response.id);
+				localStorage.setItem("name", this.username);
 			}catch (e) {
-
 			}
+			console.log(this.username + ": " + this.response.id);
 			this.loading = false;
 			this.$router.push("/homepage");
 		},
