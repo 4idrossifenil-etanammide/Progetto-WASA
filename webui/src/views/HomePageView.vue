@@ -3,22 +3,19 @@
 export default {
     data: function() {
         return{
-            photoURL: __API_URL__ + "/tmp/images/",
-            photos: [],
-            prova: "http://localhost:3000/profiles/Stefano/photos/202820850"
+            photoURL: __API_URL__ + "/profiles/" + localStorage.getItem("name") + "/photos/",
+            photos: []
         }
     },
-    mounted() {
-        this.caricaFoto();
+    async mounted() {
+        await this.caricaFoto();
     },
     methods: {
         async caricaFoto() {
             try{
                 const response = await this.$axios.get("/profiles/" + localStorage.getItem("name") + "/photos")
-                let data = response.data["photos"]
-                for (let i = 0; i<data.length; i++) {
-                    this.photos.push(photoURL + data[i]["photoID"] + ".png")
-                }
+                this.photos = response.data["photos"]
+                console.log(this.photos)
             } catch (e) {}
         },
     }
@@ -30,7 +27,9 @@ export default {
         <div class="header">
             <h1 class="title">WasaPHOTO</h1>
         </div>
-        <img :src="prova">
+        <div v-for="photo in this.photos">
+            <Photo :id="photo.photoID" :name="photo.name" :likes="photo.likeNumber" :comments="photo.commentNumber"/>
+        </div>
         <div class="footer">
             <button>Bottone 1</button>
             <button>Bottone 2</button>

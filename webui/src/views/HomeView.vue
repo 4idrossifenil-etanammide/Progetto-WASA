@@ -17,8 +17,12 @@ export default {
 					name : this.username
 				})
 				this.response = identifier.data;
-				localStorage.setItem("token", this.response.id);
-				localStorage.setItem("name", this.username);
+				if(!localStorage.getItem("token")){
+					localStorage.setItem("token", this.response.id);
+				}
+				if(!localStorage.getItem("name")){
+					localStorage.setItem("name", this.username);
+				}
 			}catch (e) {
 			}
 			console.log(this.username + ": " + this.response.id);

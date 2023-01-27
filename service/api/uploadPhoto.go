@@ -50,7 +50,7 @@ func (rt *_router) UploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// Insert the info into the database, using the id of the user and the path to the folder where we store the images
-	dbPhoto, err := rt.db.UploadPhoto(id.Id, "/tmp/images/")
+	dbPhoto, err := rt.db.UploadPhoto(id.Id, "/tmp/images/", username)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Error when inserting on database")
 		w.WriteHeader(http.StatusInternalServerError)

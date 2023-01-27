@@ -47,6 +47,7 @@ type ID struct {
 }
 
 type Photo struct {
+	Name          string    `json:"name"`
 	PhotoID       string    `json:"photoID"`
 	UploadingDate time.Time `json:"date"`
 	LikeNumber    int       `json:"likeNumber"`
@@ -76,7 +77,7 @@ type AppDatabase interface {
 
 	SetName(string, string) error
 
-	UploadPhoto(string, string) (Photo, error)
+	UploadPhoto(string, string, string) (Photo, error)
 	DeletePhoto(string, string) error
 
 	LikePhoto(string, string) error

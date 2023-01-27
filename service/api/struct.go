@@ -45,6 +45,7 @@ func (i *ID) ToDatabase() database.ID {
 
 // Struct to collect information about a photo, same as above
 type Photo struct {
+	Name          string    `json:"name"`
 	PhotoID       string    `json:"photoID"`
 	UploadingDate time.Time `json:"date"`
 	LikeNumber    int       `json:"likeNumber"`
@@ -52,6 +53,7 @@ type Photo struct {
 }
 
 func (p *Photo) FromDatabase(photo database.Photo) {
+	p.Name = photo.Name
 	p.PhotoID = photo.PhotoID
 	p.UploadingDate = photo.UploadingDate
 	p.CommentNumber = photo.CommentNumber
@@ -60,6 +62,7 @@ func (p *Photo) FromDatabase(photo database.Photo) {
 
 func (p *Photo) ToDatabase() database.Photo {
 	return database.Photo{
+		Name:          p.Name,
 		PhotoID:       p.PhotoID,
 		UploadingDate: p.UploadingDate,
 		LikeNumber:    p.LikeNumber,

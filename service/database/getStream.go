@@ -19,16 +19,31 @@ func (db *appdbimpl) GetStream(userId string) (Stream, error) {
 		if err != nil {
 			return Stream{}, err
 		}
-
-		stream.Photos = append(stream.Photos, tmp)
-
-		sort.Slice(stream.Photos, func(i, j int) bool {
-			return stream.Photos[i].UploadingDate.Before(stream.Photos[j].UploadingDate)
-		})
 	}
 	if err := rows.Err(); err != nil {
 		return Stream{}, err
 	}
+
+	rows1, err := db.c.Query(`SELECT Nome From Utente WHERE Utente.ID IN (SELECT Utente FROM Foto WHERE FotoID = ?);`, tmp.PhotoID)
+	if err != nil {
+		return Stream{}, err
+	}
+
+	for rows1.Next() {
+		err = rows1.Scan(&tmp.Name)
+		if err != nil {
+			return Stream{}, err
+		}
+	}
+	if err := rows1.Err(); err != nil {
+		return Stream{}, err
+	}
+
+	stream.Photos = append(stream.Photos, tmp)
+
+	sort.Slice(stream.Photos, func(i, j int) bool {
+		return stream.Photos[i].UploadingDate.Before(stream.Photos[j].UploadingDate)
+	})
 
 	return stream, nil
 }
