@@ -82,6 +82,7 @@ type AppDatabase interface {
 
 	LikePhoto(string, string) error
 	UnlikePhoto(string, string) error
+	GetLikePhoto(string, string) (bool, error)
 
 	BanUser(string, string) error
 	UnbanUser(string, string) error

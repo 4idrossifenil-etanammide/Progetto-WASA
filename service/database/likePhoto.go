@@ -70,7 +70,7 @@ func (db *appdbimpl) LikePhoto(photoId string, user string) error {
 	if err != nil {
 		return err
 	}
-	_, err = db.c.Exec(`UPDATE Foto SET nLikes = nLikes + 1 WHERE FotoID = ? AND Utente = ?;`, photoId, userId)
+	_, err = db.c.Exec(`UPDATE Foto SET nLikes = nLikes + 1 WHERE FotoID = ?;`, photoId)
 	if err != nil {
 		return err
 	}

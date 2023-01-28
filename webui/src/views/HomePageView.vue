@@ -15,7 +15,6 @@ export default {
             try{
                 const response = await this.$axios.get("/profiles/" + localStorage.getItem("name") + "/photos")
                 this.photos = response.data["photos"]
-                console.log(this.photos)
             } catch (e) {}
         },
     }
@@ -27,8 +26,10 @@ export default {
         <div class="header">
             <h1 class="title">WasaPHOTO</h1>
         </div>
-        <div v-for="photo in this.photos">
-            <Photo :id="photo.photoID" :name="photo.name" :likes="photo.likeNumber" :comments="photo.commentNumber"/>
+        <div class="photo-container">
+            <div class="photo" v-if="this.photos.length != 0" v-for="photo in this.photos">
+                <Photo :id="photo.photoID" :name="photo.name" :likes="photo.likeNumber" :comments="photo.commentNumber" :date="photo.date"/>
+            </div>
         </div>
         <div class="footer">
             <button>Bottone 1</button>
@@ -55,6 +56,19 @@ export default {
 
 .title {
     text-align: center;
+}
+
+.photo-container{
+    width: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: scroll;
+}
+
+.photo{
+    margin-bottom: 15px;
 }
 
 .footer {
