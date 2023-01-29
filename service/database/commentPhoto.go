@@ -36,5 +36,10 @@ func (db *appdbimpl) CommentPhoto(photoId string, comment Comment) (UserName, er
 		return UserName{}, err
 	}
 
+	_, err = db.c.Exec(`UPDATE Foto SET nCommenti = nCommenti + 1 WHERE FotoID = ?;`, photoId)
+	if err != nil {
+		return UserName{}, err
+	}
+
 	return UserName{Name: comment.Name}, nil
 }

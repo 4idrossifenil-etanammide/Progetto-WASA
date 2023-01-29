@@ -52,6 +52,7 @@ type Photo struct {
 	UploadingDate time.Time `json:"date"`
 	LikeNumber    int       `json:"likeNumber"`
 	CommentNumber int       `json:"commentNumber"`
+	Comments      []Comment `json:"comments"`
 }
 
 type Comment struct {

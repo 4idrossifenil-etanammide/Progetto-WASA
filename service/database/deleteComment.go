@@ -42,5 +42,10 @@ func (db *appdbimpl) DeleteComment(photoId string, userComment string) error {
 		return err
 	}
 
+	_, err = db.c.Exec(`UPDATE Foto SET nLikes = nLikes - 1 WHERE FotoID = ?;`, photoId)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

@@ -5,7 +5,8 @@ export default {
             photoURL: __API_URL__ + "/profiles/" + localStorage.getItem("name") + "/photos/",
             heartColor: "black",
             nLike : 0,
-            prova: {}
+            initColor: {},
+            showModal: false
         }
     },
     async mounted() {
@@ -29,13 +30,16 @@ export default {
         async initializePhoto() {
             try {
                 let risp = await this.$axios.get("/profiles/" + this.name + "/photos/" + this.id + "/likes/" + localStorage.getItem("name"))
-                this.prova = risp.data["liked"]
-                this.heartColor = this.prova == "true" ? "red" : "black"
+                this.initColor = risp.data["liked"]
+                this.heartColor = this.initColor == "true" ? "red" : "black"
             } catch (e) {}
+        },
+        closeComment(bool) {
+            this.showModal = bool;
         }
     },
 
-    props: ["id", "name", "likes", "comments", "date"]
+    props: ["id", "name", "likes", "comments", "date", "textComments"]
 }
 </script>
 
@@ -55,7 +59,7 @@ export default {
                 </svg>
             </button>
             <div class="like-count">{{ nLike }} </div>
-            <button class="comment-button">
+            <button class="comment-button" @click="showModal = true">
                 <svg width="24" height="24" viewBox="0 0 1300 1300">
                     
                     <g transform="translate(-450.000000,1560.000000) scale(0.100000,-0.100000)"
@@ -81,6 +85,7 @@ export default {
                     </g>
                 </svg>
             </button>
+            <CommentModal v-if="showModal" @closeCommentModal="closeComment" :comments="textComments"></CommentModal>
             <div class="comment-count">{{ comments }} </div>
         </div>
     </div>

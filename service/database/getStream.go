@@ -34,6 +34,12 @@ func (db *appdbimpl) GetStream(userId string) (Stream, error) {
 		if err := rows1.Err(); err != nil {
 			return Stream{}, err
 		}
+		rows1.Close()
+
+		tmp.Comments, err = getComments(tmp.PhotoID, db)
+		if err != nil {
+			return Stream{}, err
+		}
 
 		stream.Photos = append(stream.Photos, tmp)
 	}
@@ -41,9 +47,52 @@ func (db *appdbimpl) GetStream(userId string) (Stream, error) {
 		return Stream{}, err
 	}
 
+	rows.Close()
 	sort.Slice(stream.Photos, func(i, j int) bool {
 		return stream.Photos[i].UploadingDate.After(stream.Photos[j].UploadingDate)
 	})
 
 	return stream, nil
+}
+
+func getComments(photoID string, db *appdbimpl) ([]Comment, error) {
+	rows, err := db.c.Query(`SELECT Utente, Testo FROM Commenti WHERE FotoReference = ?;`, photoID)
+	if err != nil {
+		return []Comment{}, err
+	}
+
+	var id string
+	var text string
+	var name string
+	var comment Comment
+	var toReturn []Comment
+	for rows.Next() {
+		err = rows.Scan(&id, &text)
+		if err != nil {
+			return []Comment{}, err
+		}
+
+		rows1, err := db.c.Query(`SELECT Nome FROM Utente WHERE ID = ?;`, id)
+		if err != nil {
+			return []Comment{}, err
+		}
+
+		for rows1.Next() {
+			err = rows1.Scan(&name)
+			if err != nil {
+				return []Comment{}, err
+			}
+		}
+		if err := rows1.Err(); err != nil {
+			return []Comment{}, err
+		}
+		rows1.Close()
+
+		comment.Name = name
+		comment.Text = text
+
+		toReturn = append(toReturn, comment)
+	}
+	rows.Close()
+	return toReturn, nil
 }

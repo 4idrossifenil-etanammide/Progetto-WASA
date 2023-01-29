@@ -50,6 +50,7 @@ type Photo struct {
 	UploadingDate time.Time `json:"date"`
 	LikeNumber    int       `json:"likeNumber"`
 	CommentNumber int       `json:"commentNumber"`
+	Comments      []Comment `json:"comments"`
 }
 
 func (p *Photo) FromDatabase(photo database.Photo) {
@@ -58,15 +59,27 @@ func (p *Photo) FromDatabase(photo database.Photo) {
 	p.UploadingDate = photo.UploadingDate
 	p.CommentNumber = photo.CommentNumber
 	p.LikeNumber = photo.LikeNumber
+	var tmpComment Comment
+	for _, comment := range photo.Comments {
+		tmpComment.FromDatabase(comment)
+		p.Comments = append(p.Comments, tmpComment)
+	}
 }
 
 func (p *Photo) ToDatabase() database.Photo {
+	var dbComments []database.Comment
+	var tmpComment database.Comment
+	for _, comment := range p.Comments {
+		tmpComment = comment.ToDatabase()
+		dbComments = append(dbComments, tmpComment)
+	}
 	return database.Photo{
 		Name:          p.Name,
 		PhotoID:       p.PhotoID,
 		UploadingDate: p.UploadingDate,
 		LikeNumber:    p.LikeNumber,
 		CommentNumber: p.CommentNumber,
+		Comments:      dbComments,
 	}
 }
 
