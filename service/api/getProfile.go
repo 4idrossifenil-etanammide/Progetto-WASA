@@ -7,6 +7,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"wasaphoto.uniroma1.it/wasaphoto/service/api/reqcontext"
+	"wasaphoto.uniroma1.it/wasaphoto/service/database"
 )
 
 func (rt *_router) GetProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -20,9 +21,16 @@ func (rt *_router) GetProfile(w http.ResponseWriter, r *http.Request, ps httprou
 
 	result, err := rt.db.GetProfile(id.Id, username)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Operation failed!")
-		w.WriteHeader(http.StatusBadRequest)
-		return
+		if err == database.ErrBan {
+			w.WriteHeader(http.StatusOK)
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(Profile{})
+			return
+		} else {
+			ctx.Logger.WithError(err).Error("Operation failed!")
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 	}
 
 	profile.FromDatabase(result)

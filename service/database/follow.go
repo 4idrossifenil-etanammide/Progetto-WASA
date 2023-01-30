@@ -25,6 +25,7 @@ func (db *appdbimpl) Follow(userId string, follower string) error {
 		return err
 	}
 	if rows.Next() {
+		rows.Close()
 		return nil
 	}
 	if err := rows.Err(); err != nil {

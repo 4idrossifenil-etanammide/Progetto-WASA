@@ -26,12 +26,12 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 		return Profile{}, ErrUserDoesntExist
 	}
 
+	rows.Close()
 	err = db.CheckBan(userId, profileId)
 	if err != nil {
 		return Profile{}, err
 	}
 
-	rows.Close()
 	rows, err = db.c.Query(`SELECT FotoID, Data, nLikes, nCommenti FROM Foto WHERE Utente = ?;`, profileId)
 	if err != nil {
 		return Profile{}, err
@@ -56,14 +56,14 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 		return Profile{}, err
 	}
 
-	var tmpFollower UserName
+	var tmpFollowing UserName
 	for rows.Next() {
-		err = rows.Scan(&tmpFollower.Name)
+		err = rows.Scan(&tmpFollowing.Name)
 		if err != nil {
 			return Profile{}, err
 		}
 
-		profile.Follower = append(profile.Follower, tmpFollower)
+		profile.Following = append(profile.Following, tmpFollowing)
 	}
 	if err := rows.Err(); err != nil {
 		return Profile{}, err
@@ -75,14 +75,14 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 		return Profile{}, err
 	}
 
-	var tmpFollowing UserName
+	var tmpFollower UserName
 	for rows.Next() {
-		err = rows.Scan(&tmpFollowing.Name)
+		err = rows.Scan(&tmpFollower.Name)
 		if err != nil {
 			return Profile{}, err
 		}
 
-		profile.Following = append(profile.Following, tmpFollowing)
+		profile.Follower = append(profile.Follower, tmpFollower)
 	}
 	if err := rows.Err(); err != nil {
 		return Profile{}, err

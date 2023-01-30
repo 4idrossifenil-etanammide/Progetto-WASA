@@ -8,6 +8,7 @@ export default{
         }
     },
     async mounted(){
+        console.log(this.photoComments)
         this.photoComments = this.comments
         this.name = localStorage.getItem("name")
     },

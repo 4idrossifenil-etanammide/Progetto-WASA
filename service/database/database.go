@@ -93,6 +93,7 @@ type AppDatabase interface {
 	BanUser(string, string) error
 	UnbanUser(string, string) error
 	CheckBan(string, string) error
+	GetBan(string, string) (bool, error)
 
 	CommentPhoto(string, Comment) (CommentID, error)
 	DeleteComment(string, string) error
