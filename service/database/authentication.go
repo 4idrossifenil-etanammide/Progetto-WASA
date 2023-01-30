@@ -8,11 +8,10 @@ var ErrAuthentication = errors.New("L'ID non corrisponde con l'username")
 
 func (db *appdbimpl) CheckToken(id string, username string) error {
 
-	rows, err := db.c.Query(`SELECT nome FROM Utente WHERE id = ?`, id)
+	rows, err := db.c.Query(`SELECT Nome FROM Utente WHERE id = ?;`, id)
 	if err != nil {
 		return err
 	}
-	defer func() { _ = rows.Close() }()
 
 	var output string
 	if rows.Next() {
@@ -28,6 +27,8 @@ func (db *appdbimpl) CheckToken(id string, username string) error {
 	if username != output {
 		return ErrAuthentication
 	}
+
+	rows.Close()
 
 	return nil
 }

@@ -5,12 +5,14 @@ export default {
             photoURL: __API_URL__ + "/profiles/" + localStorage.getItem("name") + "/photos/",
             heartColor: "black",
             nLike : 0,
+            nComments : 0,
             initColor: {},
             showModal: false
         }
     },
     async mounted() {
         this.nLike = this.likes;
+        this.nComments = this.comments;
         await this.initializePhoto();
     },
     methods: {
@@ -36,6 +38,13 @@ export default {
         },
         closeComment(bool) {
             this.showModal = bool;
+        },
+        updateNComment(bool) {
+            if (bool) {
+                this.nComments = this.nComments + 1
+            } else {
+                this.nComments = this.nComments - 1
+            }
         }
     },
 
@@ -85,8 +94,15 @@ export default {
                     </g>
                 </svg>
             </button>
-            <CommentModal v-if="showModal" @closeCommentModal="closeComment" :comments="textComments"></CommentModal>
-            <div class="comment-count">{{ comments }} </div>
+            <CommentModal 
+                v-if="showModal" 
+                @closeCommentModal="closeComment" 
+                @updateCommentCounter="updateNComment"
+                :comments="textComments" 
+                :user="name" 
+                :photoID="id">
+            </CommentModal>
+            <div class="comment-count">{{ this.nComments }} </div>
         </div>
     </div>
 </template>

@@ -16,6 +16,7 @@ func (rt *_router) DeleteComment(w http.ResponseWriter, r *http.Request, ps http
 
 	userComment := ps.ByName("user")
 	photoId := ps.ByName("photo_id")
+	commentId := ps.ByName("comment_id")
 
 	// Check authorization, in this case we have to check the authorization for the
 	// user who commented
@@ -31,7 +32,7 @@ func (rt *_router) DeleteComment(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 
-	err = rt.db.DeleteComment(photoId, userComment)
+	err = rt.db.DeleteComment(photoId, commentId)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("Operation failed!")
 		w.WriteHeader(http.StatusBadRequest)

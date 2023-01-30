@@ -61,6 +61,7 @@ func (p *Photo) FromDatabase(photo database.Photo) {
 	p.LikeNumber = photo.LikeNumber
 	var tmpComment Comment
 	for _, comment := range photo.Comments {
+		tmpComment = Comment{}
 		tmpComment.FromDatabase(comment)
 		p.Comments = append(p.Comments, tmpComment)
 	}
@@ -84,18 +85,21 @@ func (p *Photo) ToDatabase() database.Photo {
 }
 
 type Comment struct {
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 	Text string `json:"comment"`
 }
 
 func (c *Comment) ToDatabase() database.Comment {
 	return database.Comment{
+		ID:   c.ID,
 		Name: c.Name,
 		Text: c.Text,
 	}
 }
 
 func (c *Comment) FromDatabase(comment database.Comment) {
+	c.ID = comment.ID
 	c.Name = comment.Name
 	c.Text = comment.Text
 }
@@ -107,6 +111,7 @@ type Stream struct {
 func (s *Stream) FromDatabase(stream database.Stream) {
 	var tmpPhoto Photo
 	for _, photo := range stream.Photos {
+		tmpPhoto.Comments = []Comment{}
 		tmpPhoto.FromDatabase(photo)
 		s.Photos = append(s.Photos, tmpPhoto)
 	}

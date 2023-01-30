@@ -56,6 +56,7 @@ type Photo struct {
 }
 
 type Comment struct {
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 	Text string `json:"comment"`
 }
@@ -69,6 +70,10 @@ type Profile struct {
 
 type Stream struct {
 	Photos []Photo `json:"photos"`
+}
+
+type CommentID struct {
+	ID int `json:"id"`
 }
 
 // AppDatabase is the high level interface for the DB
@@ -89,7 +94,7 @@ type AppDatabase interface {
 	UnbanUser(string, string) error
 	CheckBan(string, string) error
 
-	CommentPhoto(string, Comment) (UserName, error)
+	CommentPhoto(string, Comment) (CommentID, error)
 	DeleteComment(string, string) error
 
 	Follow(string, string) error

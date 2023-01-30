@@ -1,48 +1,21 @@
 package database
 
-import (
-	"errors"
-)
+import "strconv"
 
-var ErrCommentDeleteNotAllowed = errors.New("You can delete only your own comments")
+func (db *appdbimpl) DeleteComment(photoId string, commentId string) error {
 
-func (db *appdbimpl) DeleteComment(photoId string, userComment string) error {
-
-	rows, err := db.c.Query(`SELECT Utente FROM Foto WHERE FotoID = ?`, photoId)
-	if err != nil {
-		return err
-	}
-	if !rows.Next() {
-		return ErrPhoto
-	}
-	if err := rows.Err(); err != nil {
-		return err
-	}
-
-	rows.Close()
-	rows, err = db.c.Query(`SELECT ID FROM Utente WHERE Nome = ?`, userComment)
+	var valueForQuery int
+	valueForQuery, err := strconv.Atoi(commentId)
 	if err != nil {
 		return err
 	}
 
-	var userCommentId string
-	if rows.Next() {
-		err = rows.Scan(&userCommentId)
-		if err != nil {
-			return err
-		}
-	}
-	if err := rows.Err(); err != nil {
-		return err
-	}
-
-	rows.Close()
-	_, err = db.c.Exec(`DELETE FROM Commenti WHERE Utente = ?`, userCommentId)
+	_, err = db.c.Exec(`DELETE FROM Commenti WHERE CommentiID = ?;`, valueForQuery)
 	if err != nil {
 		return err
 	}
 
-	_, err = db.c.Exec(`UPDATE Foto SET nLikes = nLikes - 1 WHERE FotoID = ?;`, photoId)
+	_, err = db.c.Exec(`UPDATE Foto SET nCommenti = nCommenti - 1 WHERE FotoID = ?;`, photoId)
 	if err != nil {
 		return err
 	}

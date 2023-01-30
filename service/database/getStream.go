@@ -42,6 +42,7 @@ func (db *appdbimpl) GetStream(userId string) (Stream, error) {
 		}
 
 		stream.Photos = append(stream.Photos, tmp)
+		tmp.Comments = []Comment{}
 	}
 	if err := rows.Err(); err != nil {
 		return Stream{}, err
@@ -56,18 +57,19 @@ func (db *appdbimpl) GetStream(userId string) (Stream, error) {
 }
 
 func getComments(photoID string, db *appdbimpl) ([]Comment, error) {
-	rows, err := db.c.Query(`SELECT Utente, Testo FROM Commenti WHERE FotoReference = ?;`, photoID)
+	rows, err := db.c.Query(`SELECT CommentiID, Utente, Testo FROM Commenti WHERE FotoReference = ?;`, photoID)
 	if err != nil {
 		return []Comment{}, err
 	}
 
+	var commentId int
 	var id string
 	var text string
 	var name string
 	var comment Comment
 	var toReturn []Comment
 	for rows.Next() {
-		err = rows.Scan(&id, &text)
+		err = rows.Scan(&commentId, &id, &text)
 		if err != nil {
 			return []Comment{}, err
 		}
@@ -88,10 +90,15 @@ func getComments(photoID string, db *appdbimpl) ([]Comment, error) {
 		}
 		rows1.Close()
 
+		comment.ID = commentId
 		comment.Name = name
 		comment.Text = text
 
 		toReturn = append(toReturn, comment)
+	}
+
+	if err := rows.Err(); err != nil {
+		return []Comment{}, err
 	}
 	rows.Close()
 	return toReturn, nil

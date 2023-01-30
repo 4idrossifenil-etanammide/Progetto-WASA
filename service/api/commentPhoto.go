@@ -14,7 +14,7 @@ import (
 func (rt *_router) CommentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	var id ID
-	var userName UserName
+	var toReturn CommentID
 	var comment Comment
 
 	photoId := ps.ByName("photo_id")
@@ -46,10 +46,18 @@ func (rt *_router) CommentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	userName.FromDatabase(result)
+	toReturn.FromDatabase(result)
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(userName)
+	_ = json.NewEncoder(w).Encode(toReturn)
 
+}
+
+type CommentID struct {
+	ID int `json:"id"`
+}
+
+func (c *CommentID) FromDatabase(comment database.CommentID) {
+	c.ID = comment.ID
 }
