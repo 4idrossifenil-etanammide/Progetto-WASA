@@ -172,9 +172,11 @@ paths:
             content:
               application/json:
                 schema:
+                  description: Describe the presence of a ban
                   type: object
                   properties:
                     isAlreadyBanned:
+                      description: Describe the string that tell us if a ban is present
                       type: string
                       example: "True"
                       minLength: 3
@@ -432,9 +434,11 @@ paths:
             content:
               application/json:
                 schema:
+                  description: Describe the presence of a like
                   type: object
                   properties:
                     isAlreadyLiked:
+                      description: A string that describe the presence of a like
                       type: string
                       example: "True"
                       minLength: 3
@@ -640,7 +644,10 @@ components:
           example: 50
           description: The number of photo's comments
         comments:
+          description: Describe the comment's photo
           type: array
+          minItems: 0
+          maxItems: 50
           items:
             type: object
             properties:
