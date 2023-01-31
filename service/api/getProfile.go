@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -21,7 +22,7 @@ func (rt *_router) GetProfile(w http.ResponseWriter, r *http.Request, ps httprou
 
 	result, err := rt.db.GetProfile(id.Id, username)
 	if err != nil {
-		if err == database.ErrBan {
+		if errors.Is(err, database.ErrBan) {
 			w.WriteHeader(http.StatusOK)
 			w.Header().Set("Content-Type", "application/json")
 			_ = json.NewEncoder(w).Encode(Profile{})
