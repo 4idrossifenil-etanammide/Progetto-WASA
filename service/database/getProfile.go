@@ -89,6 +89,8 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 	}
 	rows.Close()
 
+	profile.PhotoNumber = len(profile.Photos)
+
 	sort.Slice(profile.Photos, func(i, j int) bool {
 		return profile.Photos[i].UploadingDate.Before(profile.Photos[j].UploadingDate)
 	})

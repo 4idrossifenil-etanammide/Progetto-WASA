@@ -48,8 +48,8 @@ export default{
 <template id="modal-template">
         <div class="modal-mask">
             <div class="modal-wrapper">
-                <div class="header">
-                    <div class="title"> Commenti </div>
+                <div class="header-comment">
+                    <div class="title-comment"> Commenti </div>
                     <button class="close-button" @click="this.$emit('closeCommentModal', false)"> 
                         <svg width="24" height="24" viewBox="0 0 512.000000 512.000000">
                             
@@ -152,12 +152,12 @@ export default{
     border-radius: 10px;
 }
 
-.title{
+.title-comment {
     font-weight: bold;
     font-size: 30px;
 }
 
-.header {
+.header-comment {
     position: relative;
     display: flex;
     flex-direction: row;

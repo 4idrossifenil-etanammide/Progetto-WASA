@@ -8,12 +8,17 @@ export default {
             banButtonLabel : "Ban",
             followerNumber : 0,
             banColor : {r : 199, g: 29, b: 29, a: 1},
-            followColor : {r : 41, g: 216, b: 47, a: 1}
+            followColor : {r : 41, g: 216, b: 47, a: 1},
+            personalProfile: false
         }
     },
     async mounted() {
         try{   
             this.profileName = localStorage.getItem("profile")
+            this.personalProfile = this.profileName == localStorage.getItem("name")
+            if(this.personalProfile){
+                this.$router.replace("/homepage/profile/personal")
+            }
             let response = await this.$axios.get("/profiles/" + this.profileName)
             this.profileData = response.data
             console.log(this.profileData)
@@ -28,7 +33,6 @@ export default {
             }
             let risp = await this.$axios.get("/profiles/" + localStorage.getItem("name") + "/banned/" + localStorage.getItem("profile"))
             let dataBan = risp.data["banned"]
-            console.log(this.dataBan)
             this.banButtonLabel = dataBan == "true" ? "Unban" : "Ban"
 
             if(this.banButtonLabel == "Unban") {
@@ -73,6 +77,9 @@ export default {
                     this.followColor.a = 1
                 }
             }
+        },
+        update() {
+            this.$router.go(0);
         }
     }
 }
@@ -80,25 +87,22 @@ export default {
 
 <template>
     <div class="page">
-        <div class="header">
-            <h1 class="title">WasaPHOTO</h1>
-            <form class="search-form" @submit.prevent="search">
-				<input class="input-form" v-model="userToSearch" type="text" placeholder="Search username..." required>
-			</form>
-        </div>
+        <Header @updateParent="update"></Header>
         <div class="profile-info">
             <div class="profile-name"> {{ this.profileName }} </div>
 
-            <button class="ban-button" 
-                @click="ban" 
-                :style="{ backgroundColor : 'rgba(' + banColor.r + ', ' + banColor.g + ', ' + banColor.b + ', ' + banColor.a + ')'}">
-                 {{ this.banButtonLabel }}
-            </button>
-            <button class="follow-button" 
-                @click="follow"
-                :style="{ backgroundColor : 'rgba(' + followColor.r + ', ' + followColor.g + ', ' + followColor.b + ', ' + followColor.a + ')'}"> 
-                {{ this.followButtonLabel }}
-            </button>
+            <div class="general-button">
+                <button class="ban-button" 
+                    @click="ban" 
+                    :style="{ backgroundColor : 'rgba(' + banColor.r + ', ' + banColor.g + ', ' + banColor.b + ', ' + banColor.a + ')'}">
+                    {{ this.banButtonLabel }}
+                </button>
+                <button class="follow-button" 
+                    @click="follow"
+                    :style="{ backgroundColor : 'rgba(' + followColor.r + ', ' + followColor.g + ', ' + followColor.b + ', ' + followColor.a + ')'}"> 
+                    {{ this.followButtonLabel }}
+                </button>
+            </div>
 
             <div class="profile-info-box">
                 <div class="profile-follower-box">
@@ -119,7 +123,7 @@ export default {
         </div>
         <div class="photo-container">
             <div class="photo" v-if="this.profileData['Photos'] != null" v-for="photo in this.profileData['Photos']" :key="photo.photoID">
-                <Photo :id="photo.photoID" :name="photo.name" :likes="photo.likeNumber" :comments="photo.commentNumber" :date="photo.date" :textComments="photo.comments"/>
+                <Photo :id="photo.photoID" :name="this.profileName" :likes="photo.likeNumber" :comments="photo.commentNumber" :date="photo.date" :textComments="photo.comments"/>
             </div>
         </div>
     </div>
@@ -201,7 +205,8 @@ export default {
     justify-content: center;
     align-items: center;
     text-align: center;
-    margin-top: 10px;
+    position: relative;
+    bottom: 10px;
 }
 
 .profile-name {
@@ -217,36 +222,10 @@ export default {
     height: 200px;
 }
 
-.input-form {
-    border: 1px solid #ccc;
-	border-radius: 4px; /* Aggiunge spigoli arrotondati */
-    height: 30px;
-}
-
-.search-form {
-    position: relative;
-    left: 650px;
-    top: 10px;
-}
-
 .page {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.header {
-    background-color: rgb(215, 255, 255);
-    height: 50px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-}
-
-.title{
-    position: relative;
-    top: 7px;
-    left: 90px;
-}
 </style>

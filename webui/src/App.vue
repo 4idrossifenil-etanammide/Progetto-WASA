@@ -3,8 +3,14 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <script>
-localStorage.clear();
-export default {}
+export default {
+	created() {
+		if(!localStorage.getItem("start")){
+			localStorage.clear()
+			localStorage.setItem("start", true)
+		}
+	}
+}
 </script>
 
 <template>

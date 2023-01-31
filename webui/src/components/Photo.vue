@@ -7,12 +7,14 @@ export default {
             nLike : 0,
             nComments : 0,
             initColor: {},
-            showModal: false
+            showModal: false,
+            userName: ""
         }
     },
     async mounted() {
         this.nLike = this.likes;
         this.nComments = this.comments;
+        this.userName = localStorage.getItem("name")
         await this.initializePhoto();
     },
     methods: {
@@ -38,6 +40,7 @@ export default {
         },
         closeComment(bool) {
             this.showModal = bool;
+            this.$router.go(0);
         },
         updateNComment(bool) {
             if (bool) {
@@ -45,6 +48,10 @@ export default {
             } else {
                 this.nComments = this.nComments - 1
             }
+        },
+        async deletePhoto() {
+            await this.$axios.delete("/profiles/" + localStorage.getItem("name") + "/photos/" + this.id)
+            this.$router.go(0);
         }
     },
 
@@ -57,6 +64,25 @@ export default {
         <img :src="photoURL + id" class="image">
         <div class="upper-left">
             {{ name }}
+            <div v-show="name == this.userName">
+                <button class="delete-photo-button" @click="deletePhoto">
+                    <svg width="24" height="24" viewBox="0 0 512.000000 512.000000">
+                            
+                            <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
+                                fill="#000000" stroke="none">
+                                <path d="M3735 4157 c-22 -8 -51 -19 -65 -26 -14 -7 -269 -257 -567 -554
+                                l-543 -542 -532 531 c-348 346 -550 541 -583 560 -46 26 -58 29 -145 29 -84 0
+                                -101 -3 -145 -27 -67 -35 -140 -110 -173 -178 -22 -46 -27 -68 -27 -135 0 -67
+                                5 -88 27 -131 21 -39 160 -184 565 -587 l538 -536 -536 -538 c-614 -616 -595
+                                -592 -587 -736 5 -97 33 -158 106 -232 71 -71 140 -100 237 -100 67 0 88 5
+                                131 27 38 20 187 163 587 565 l536 538 543 -542 c603 -603 584 -587 714 -587
+                                60 0 81 5 136 32 130 64 208 184 208 320 0 128 10 115 -588 715 l-536 537 545
+                                548 c608 609 584 579 584 717 0 59 -5 81 -32 136 -59 119 -173 198 -297 205
+                                -34 2 -79 -2 -101 -9z"/>
+                            </g>
+                        </svg>
+                </button>
+            </div>
         </div>
         <div class="bottom-left">
             {{ date.split(".")[0].split("T")[0] }} {{ date.split(".")[0].split("T")[1] }}
@@ -109,6 +135,14 @@ export default {
 </template>
 
 <style>
+
+.delete-photo-button {
+    position: relative;
+    bottom: 30px;
+    left: 400px;
+    background-color: #dfdbdb;
+    border:  #dfdbdb;
+}
 
 .rounded-image-container {
     width: 450px;
