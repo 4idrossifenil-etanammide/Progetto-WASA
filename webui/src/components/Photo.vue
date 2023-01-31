@@ -94,14 +94,15 @@ export default {
                     </g>
                 </svg>
             </button>
-            <CommentModal 
-                v-if="showModal" 
-                @closeCommentModal="closeComment" 
-                @updateCommentCounter="updateNComment"
-                :comments="textComments" 
-                :user="name" 
-                :photoID="id">
-            </CommentModal>
+            <div v-if="showModal" >
+                <CommentModal 
+                    @closeCommentModal="closeComment" 
+                    @updateCommentCounter="updateNComment"
+                    :comments="textComments" 
+                    :user="name" 
+                    :photoID="id">
+                </CommentModal>
+            </div>
             <div class="comment-count">{{ this.nComments }} </div>
         </div>
     </div>

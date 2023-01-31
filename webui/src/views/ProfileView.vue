@@ -118,7 +118,7 @@ export default {
             </div>
         </div>
         <div class="photo-container">
-            <div class="photo" v-if="this.profileData['Photos'] != null" v-for="photo in this.profileData['Photos']">
+            <div class="photo" v-if="this.profileData['Photos'] != null" v-for="photo in this.profileData['Photos']" :key="photo.photoID">
                 <Photo :id="photo.photoID" :name="photo.name" :likes="photo.likeNumber" :comments="photo.commentNumber" :date="photo.date" :textComments="photo.comments"/>
             </div>
         </div>

@@ -43,7 +43,6 @@ export default {
 				<input v-model="username" type="text" ref="username" placeholder="Insert username..." required>
 				<button>Login</button>
 			</form>
-			<h4 v-if="!loading">{{ this.response.id }}</h4>
 		</div>
 	</div>
 </template>

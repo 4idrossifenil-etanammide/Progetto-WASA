@@ -36,7 +36,7 @@ export default {
 			</form>
         </div>
         <div class="photo-container">
-            <div class="photo" v-if="this.photos != null" v-for="photo in this.photos">
+            <div class="photo" v-if="this.photos != null" v-for="photo in this.photos" :key="photo.photoID">
                 <Photo :id="photo.photoID" :name="photo.name" :likes="photo.likeNumber" :comments="photo.commentNumber" :date="photo.date" :textComments="photo.comments"/>
             </div>
         </div>

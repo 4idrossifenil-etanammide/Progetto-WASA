@@ -69,7 +69,7 @@ export default{
                     </button>
                 </div>
                 <div class="comment-container">
-                    <div class="comment-section" v-for="c in this.photoComments">
+                    <div class="comment-section" v-for="c in this.photoComments" :key="c.id">
                         <div class="comment-name"> {{ c.name }} </div>
                         <div class="comment-text"> {{ c.comment }} </div>
                         <button v-show="c.name == this.name" class="cancel-comment-button" @click="cancelComment(c.id)"> 
