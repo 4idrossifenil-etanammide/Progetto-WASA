@@ -1,0 +1,15 @@
+#Costruisci il container a partire da quest'altro container
+FROM golang:1.19.4 as builder
+
+#Path dentro il container. Diciamo che questa è la nostra working directory
+WORKDIR /src/
+#Copiamo tutto dentro il container (src, dest(la nostra workdir))
+COPY . .
+
+# Runniamo go (poichè il container è costruito sopra golang possiamo farlo)
+RUN go build -o /tmp/webapi ./cmd/webapi/
+
+FROM debian:stable 
+COPY --from=builder /tmp/webapi /bin/webapi
+EXPOSE  3000
+CMD ["/bin/webapi"]

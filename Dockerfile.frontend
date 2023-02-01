@@ -1,0 +1,8 @@
+FROM node:lts as frontend-builder
+WORKDIR /src/webui
+COPY webui .
+RUN npm run build-prod
+
+FROM nginx:stable
+COPY --from=frontend-builder /src/webui/dist /usr/share/nginx/html
+EXPOSE 80

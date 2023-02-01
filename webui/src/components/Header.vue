@@ -21,6 +21,9 @@ export default {
             console.log("AAAAAA")
             localStorage.setItem("profile", localStorage.getItem("name"))
             this.$router.replace("/homepage/profile/personal");
+        },
+        returnHomePage() {
+            this.$router.replace("/homepage")
         }
     }
 }
@@ -29,7 +32,9 @@ export default {
 
 <template>
     <div class="header">
-        <h1 class="title">WasaPHOTO</h1>
+        <button class="homepage-button" @click="returnHomePage">
+            <h1 class="title">WasaPHOTO</h1>
+        </button>
         <form class="search-form" @submit.prevent="search">
 			<input class="input-form" v-model="userToSearch" ref="userToSearch" type="text" placeholder="Search username..." required>
 		</form>
@@ -53,6 +58,13 @@ export default {
 </template>
 
 <style>
+
+.homepage-button {
+    position: relative;
+    left: 120px;
+    background-color: rgb(215, 255, 255);
+    border:  #dfdbdb;
+}
 
 .profile-button {
     position: relative;
@@ -85,9 +97,8 @@ export default {
 }
 
 .title{
-    position: relative;
-    top: 7px;
-    left: 90px;
+    font-weight: bold;
+    font-size: 30px;
 }
 
 </style>

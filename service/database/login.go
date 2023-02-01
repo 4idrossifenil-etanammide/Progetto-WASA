@@ -3,6 +3,7 @@ package database
 import (
 	"hash/fnv"
 	"strconv"
+	"time"
 )
 
 /*
@@ -39,6 +40,6 @@ func (db *appdbimpl) LoginUser(u UserName) (ID, error) {
 
 func generateUniqueId(name string) string {
 	h := fnv.New32a()
-	h.Write([]byte(name))
+	h.Write([]byte(time.Now().Format("02-01-2006 15:04:05")))
 	return strconv.Itoa(int(h.Sum32()))
 }
