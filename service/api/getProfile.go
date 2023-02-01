@@ -23,9 +23,7 @@ func (rt *_router) GetProfile(w http.ResponseWriter, r *http.Request, ps httprou
 	result, err := rt.db.GetProfile(id.Id, username)
 	if err != nil {
 		if errors.Is(err, database.ErrBan) {
-			w.WriteHeader(http.StatusOK)
-			w.Header().Set("Content-Type", "application/json")
-			_ = json.NewEncoder(w).Encode(Profile{})
+			w.WriteHeader(http.StatusForbidden)
 			return
 		} else {
 			ctx.Logger.WithError(err).Error("Operation failed!")

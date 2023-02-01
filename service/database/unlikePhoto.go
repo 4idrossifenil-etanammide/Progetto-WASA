@@ -37,13 +37,6 @@ func (db *appdbimpl) UnlikePhoto(photoId string, user string) error {
 		return ErrUserDoesntExist
 	}
 
-	/*
-		err = db.CheckBan(userId, photoOwner)
-		if err != nil {
-			return err
-		}
-	*/
-
 	rows.Close()  // -> Required, otherwise the database remains locked
 	rows1.Close() // -> Required, otherwise the database remains locked
 	_, err = db.c.Exec(`DELETE FROM Like WHERE FotoReference = ? AND Utente = ?;`, photoId, userId)

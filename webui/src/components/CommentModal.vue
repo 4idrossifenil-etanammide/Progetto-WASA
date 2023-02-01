@@ -4,7 +4,8 @@ export default{
         return {
             photoComments: [],
             commentToSend: '',
-            name: ''
+            name: '',
+            commentError: false
         }
     },
     async mounted(){
@@ -14,18 +15,25 @@ export default{
     },
     methods: {
         async sendComment() {
-            let response = await this.$axios.post("/profiles/" + this.user + "/photos/" + this.photoID + "/comments", {
-                name : localStorage.getItem("name"),
-                comment: this.commentToSend
-            })
-            console.log(response.data)
-            this.photoComments.push({
-                id : response.data["id"],
-                name : localStorage.getItem("name"),
-                comment: this.commentToSend
-            })
-            console.log(this.photoComments)
-            this.$emit('updateCommentCounter', true)
+            if(this.commentToSend.length < 3) {
+                this.commentError = true;
+            } else {
+                this.commentError = false;
+                let response = await this.$axios.post("/profiles/" + this.user + "/photos/" + this.photoID + "/comments", {
+                    name : localStorage.getItem("name"),
+                    comment: this.commentToSend
+                })
+                console.log(response.data)
+                this.photoComments.push({
+                    id : response.data["id"],
+                    name : localStorage.getItem("name"),
+                    comment: this.commentToSend
+                })
+                console.log(this.photoComments)
+                this.commentToSend = '';
+                this.$refs.commentRef.reset();
+                this.$emit('updateCommentCounter', true)
+            }
         },
         async cancelComment(idComment) {
             try{
@@ -92,16 +100,23 @@ export default{
                     </div>
                 </div>
                 <div class="footer">
-                    <form class="comment-form" @submit.prevent="sendComment">
+                    <form class="comment-form" @submit.prevent="sendComment" ref="commentRef">
                         <input v-model="commentToSend" id="commentForm" type="text" ref="username" placeholder="Insert comment..." required>
                         <button>Send</button>
                     </form>
+                    <div v-show="this.commentError">
+                        <h6 class="error-label"> The comment must have a minimum of 3 characters and a maximum of 100 </h6>
+                    </div>
                 </div>
             </div>
         </div>
 </template>
 
 <style>
+
+.error-label {
+    color: red;
+}
 
 .cancel-comment-button {
     background-color: #ffffff;

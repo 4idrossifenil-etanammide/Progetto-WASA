@@ -2,17 +2,34 @@
 export default {
     data() {
         return {
-            usernameToSend: ''
+            usernameToSend: '',
+            changeUsernameError: false,
+            usernameAlreadyUsed: false
         }
     },
     methods: {
         async sendUsername() {
-            await this.$axios.put("/profiles/" + localStorage.getItem("name") + "/name", {
-                name : this.usernameToSend  
-            })
-            localStorage.setItem("name", this.usernameToSend)
-            localStorage.setItem("profile", this.usernameToSend)
-            this.$emit('closeUsernameModal', true)
+            this.usernameAlreadyUsed = false;
+            if(this.usernameToSend.length < 3 || this.usernameToSend.length > 16) {
+                this.startShaking();
+            } else {
+                try{
+                    await this.$axios.put("/profiles/" + localStorage.getItem("name") + "/name", {
+                        name : this.usernameToSend  
+                    })
+                    localStorage.setItem("name", this.usernameToSend)
+                    localStorage.setItem("profile", this.usernameToSend)
+                    this.$emit('closeUsernameModal', true)
+                } catch(e) {
+                    this.usernameAlreadyUsed = true;
+                }
+            }
+        },
+        startShaking() {
+            this.changeUsernameError = true;
+            setTimeout(() => {
+                this.changeUsernameError = false;
+            }, 500);
         }
     }
 }
@@ -39,10 +56,16 @@ export default {
                     </svg>
             </button>
             <div class="username-footer">
+                <div class="change-username-error-label">
+                    <h6 class="change-username-error-text" :class="{ shake: this.changeUsernameError }"> The username must be at least 3 characters and a maximum of 16 </h6>
+                </div>
                 <form class="username-form" @submit.prevent="sendUsername">
                     <input v-model="usernameToSend" class="username-form" id="commentForm" type="text" ref="username" placeholder="Insert username..." required>
                     <button class="username-button">Send</button>
                 </form>
+                <div class="username-already-used-label" v-show="this.usernameAlreadyUsed">
+                    <h6 class="username-already-used-text"> This username belongs to another person </h6>
+                </div>
             </div>
         </div>
     </div>
@@ -50,10 +73,42 @@ export default {
 
 <style>
 
+.username-already-used-label {
+    margin-top: 45px;
+    margin-left: 50px;
+}
+
+.username-already-used-text {
+    color: red;
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+.shake {
+    animation: shake 0.5s linear;
+}
+
+.change-username-error-label {
+    position: relative;
+    right: 40px;
+}
+
 .username-button {
     position: relative;
     left: 195px;
-    margin-top: 20px;
+    margin-top: 10px;
     background-color: rgb(151, 149, 32);
 	color: white;
 	border: none;
@@ -77,7 +132,7 @@ export default {
     max-width: 700px;
     width: 100%;
     height: 100%;
-    max-height: 150px;
+    max-height: 190px;
     background-color: #fff;
     box-shadow: 1px 1px 50px rgba(0,0,0, .5);
     padding: 20px;

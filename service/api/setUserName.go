@@ -50,7 +50,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	// Finally, it enters the change into the database, checking for errors
 	err = rt.db.SetName(id.Id, newName.Name)
 	if errors.Is(err, database.ErrChangeName) {
-		w.WriteHeader(http.StatusForbidden)
+		w.WriteHeader(http.StatusConflict)
 		return
 	} else if err != nil {
 		ctx.Logger.WithError(err).Error("can't change the name of the user")

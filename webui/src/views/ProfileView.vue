@@ -9,7 +9,8 @@ export default {
             followerNumber : 0,
             banColor : {r : 199, g: 29, b: 29, a: 1},
             followColor : {r : 41, g: 216, b: 47, a: 1},
-            personalProfile: false
+            personalProfile: false,
+            userNotFound: false
         }
     },
     async mounted() {
@@ -42,7 +43,7 @@ export default {
                 this.banColor.a = 0.2
             }
         } catch (e) {
-            console.log(e)
+            this.userNotFound = true;
         }
     },
     methods : {
@@ -77,6 +78,7 @@ export default {
                     this.followColor.a = 1
                 }
             }
+            this.update();
         },
         update() {
             this.$router.go(0);
@@ -88,7 +90,10 @@ export default {
 <template>
     <div class="page">
         <Header @updateParent="update"></Header>
-        <div class="profile-info">
+        <div class="user-not-found" v-show="this.userNotFound">
+            <h1 class="user-not-found-label"> User Not Found</h1>
+        </div>
+        <div class="profile-info" v-show="!this.userNotFound">
             <div class="profile-name"> {{ this.profileName }} </div>
 
             <div class="general-button">
@@ -104,7 +109,7 @@ export default {
                 </button>
             </div>
 
-            <div class="profile-info-box">
+            <div class="profile-info-box" v-show="this.banButtonLabel !== 'Unban'">
                 <div class="profile-follower-box">
                     <div class="profile-follower"> Follower </div>
                     <div class="profile-follower-number"> {{ this.followerNumber }} </div>
@@ -121,7 +126,7 @@ export default {
                 </div>
             </div>
         </div>
-        <div class="photo-container">
+        <div class="photo-container" v-show="this.banButtonLabel !== 'Unban'">
             <div class="photo" v-if="this.profileData['Photos'] != null" v-for="photo in this.profileData['Photos']" :key="photo.photoID">
                 <Photo :id="photo.photoID" :name="this.profileName" :likes="photo.likeNumber" :comments="photo.commentNumber" :date="photo.date" :textComments="photo.comments"/>
             </div>
@@ -130,6 +135,12 @@ export default {
 </template>
 
 <style>
+
+.user-not-found-label {
+    font-weight: bold;
+    font-size: 20px;
+    color: red;
+}
 
 .ban-button {
     width: 100px;

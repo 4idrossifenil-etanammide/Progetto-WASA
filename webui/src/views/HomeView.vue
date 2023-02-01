@@ -5,25 +5,30 @@ export default {
 			errormsg: null,
 			loading: false,
 			username: '',
-			response: {}
+			response: {},
+			error : false
 		}
 	},
 	methods: {
 		submit: async function () {
 			this.loading = true;
 			this.username = this.$refs.username.value;
-			try{
-				let identifier = await this.$axios.post("/session", {
-					name : this.username
-				})
-				this.response = identifier.data;
-				localStorage.setItem("token", this.response.id);
-				localStorage.setItem("name", this.username);
-			}catch (e) {
+			if(this.username.length < 3 || this.username.length > 16) {
+				this.error = true;
+			} else {
+				try{
+					let identifier = await this.$axios.post("/session", {
+						name : this.username
+					})
+					this.response = identifier.data;
+					localStorage.setItem("token", this.response.id);
+					localStorage.setItem("name", this.username);
+				}catch (e) {
+				}
+				console.log(this.username + ": " + this.response.id);
+				this.loading = false;
+				this.$router.push("/homepage");
 			}
-			console.log(this.username + ": " + this.response.id);
-			this.loading = false;
-			this.$router.push("/homepage");
 		},
 	},
 }
@@ -39,11 +44,19 @@ export default {
 				<input v-model="username" type="text" ref="username" placeholder="Insert username..." required>
 				<button>Login</button>
 			</form>
+			<div class="login-error-label" v-show="this.error">
+				<h4 class="login-error-text"> The username must be at least 3 characters and a maximum of 16 </h4>
+			</div>
 		</div>
 	</div>
 </template>
 
 <style>
+
+.login-error-text {
+	color: red;
+	text-align: center;
+}
 
 .centering-container {
 	position: absolute;
