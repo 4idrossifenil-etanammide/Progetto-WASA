@@ -15,7 +15,6 @@ func (db *appdbimpl) GetStream(userId string) (Stream, error) {
 
 	var tmp Photo
 	var tmpId string
-	var nBannedComments int
 	for rows.Next() {
 		err = rows.Scan(&tmp.PhotoID, &tmp.UploadingDate, &tmp.LikeNumber, &tmp.CommentNumber)
 		if err != nil {
@@ -38,21 +37,25 @@ func (db *appdbimpl) GetStream(userId string) (Stream, error) {
 		}
 		rows1.Close()
 
-		if db.CheckBan(tmpId, userId) == nil {
-			nBannedComments, tmp.Comments, err = getComments(userId, tmp.PhotoID, db)
-			if err != nil {
-				return Stream{}, err
-			}
-
-			tmp.CommentNumber = tmp.CommentNumber - nBannedComments
-			stream.Photos = append(stream.Photos, tmp)
-			tmp.Comments = []Comment{}
+		tmp.Comments, err = getComments(userId, tmp.PhotoID, db)
+		if err != nil {
+			return Stream{}, err
 		}
+		tmp.CommentNumber = len(tmp.Comments)
+
+		toSubtract, err := filterLike(tmp.PhotoID, userId, db)
+		if err != nil {
+			return Stream{}, err
+		}
+
+		tmp.LikeNumber = tmp.LikeNumber - toSubtract
+
+		stream.Photos = append(stream.Photos, tmp)
+		tmp.Comments = []Comment{}
 	}
 	if err := rows.Err(); err != nil {
 		return Stream{}, err
 	}
-
 	rows.Close()
 	sort.Slice(stream.Photos, func(i, j int) bool {
 		return stream.Photos[i].UploadingDate.After(stream.Photos[j].UploadingDate)
@@ -61,10 +64,36 @@ func (db *appdbimpl) GetStream(userId string) (Stream, error) {
 	return stream, nil
 }
 
-func getComments(userId string, photoID string, db *appdbimpl) (int, []Comment, error) {
+func filterLike(photoID string, id string, db *appdbimpl) (int, error) {
+	rows, err := db.c.Query(`SELECT Utente FROM Like WHERE FotoReference = ?;`, photoID)
+	if err != nil {
+		return 0, err
+	}
+
+	var tmpId string
+	bannedLikeCounter := 0
+	for rows.Next() {
+		err = rows.Scan(&tmpId)
+		if err != nil {
+			return 0, err
+		}
+
+		if db.CheckBan(tmpId, id) != nil || db.CheckBan(id, tmpId) != nil {
+			bannedLikeCounter = bannedLikeCounter + 1
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return 0, err
+	}
+	rows.Close()
+
+	return bannedLikeCounter, nil
+}
+
+func getComments(userId string, photoID string, db *appdbimpl) ([]Comment, error) {
 	rows, err := db.c.Query(`SELECT CommentiID, Utente, Testo FROM Commenti WHERE FotoReference = ?;`, photoID)
 	if err != nil {
-		return 0, []Comment{}, err
+		return []Comment{}, err
 	}
 
 	var commentId int
@@ -73,43 +102,40 @@ func getComments(userId string, photoID string, db *appdbimpl) (int, []Comment, 
 	var name string
 	var comment Comment
 	var toReturn []Comment
-	nBannedComments := 0
 	for rows.Next() {
 		err = rows.Scan(&commentId, &id, &text)
 		if err != nil {
-			return 0, []Comment{}, err
+			return []Comment{}, err
 		}
 
 		rows1, err := db.c.Query(`SELECT Nome FROM Utente WHERE ID = ?;`, id)
 		if err != nil {
-			return 0, []Comment{}, err
+			return []Comment{}, err
 		}
 
 		for rows1.Next() {
 			err = rows1.Scan(&name)
 			if err != nil {
-				return 0, []Comment{}, err
+				return []Comment{}, err
 			}
 		}
 		if err := rows1.Err(); err != nil {
-			return 0, []Comment{}, err
+			return []Comment{}, err
 		}
 		rows1.Close()
 
-		if db.CheckBan(id, userId) == nil {
+		if db.CheckBan(id, userId) == nil && db.CheckBan(userId, id) == nil {
 			comment.ID = commentId
 			comment.Name = name
 			comment.Text = text
 
 			toReturn = append(toReturn, comment)
-		} else {
-			nBannedComments = nBannedComments + 1
 		}
 	}
 
 	if err := rows.Err(); err != nil {
-		return 0, []Comment{}, err
+		return []Comment{}, err
 	}
 	rows.Close()
-	return nBannedComments, toReturn, nil
+	return toReturn, nil
 }

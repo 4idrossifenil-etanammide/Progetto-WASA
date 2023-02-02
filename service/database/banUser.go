@@ -38,6 +38,11 @@ func (db *appdbimpl) BanUser(userId string, banned_user string) error {
 		return err
 	}
 
+	_, err = db.c.Exec(`DELETE FROM Segue WHERE Utente = ? AND Follower = ?;`, bannedId, userId)
+	if err != nil {
+		return err
+	}
+
 	// Return nil if everythin is fine
 	return nil
 }

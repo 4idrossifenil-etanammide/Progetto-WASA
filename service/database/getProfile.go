@@ -51,44 +51,38 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 	}
 
 	rows.Close()
-	rows, err = db.c.Query(`SELECT ID, Nome FROM Utente WHERE ID IN (SELECT Follower FROM Segue WHERE Utente = ?);`, profileId)
+	rows, err = db.c.Query(`SELECT Nome FROM Utente WHERE ID IN (SELECT Follower FROM Segue WHERE Utente = ?);`, profileId)
 	if err != nil {
 		return Profile{}, err
 	}
 
 	var tmpFollowing UserName
-	var tmpFollowingId string
 	for rows.Next() {
-		err = rows.Scan(&tmpFollowingId, &tmpFollowing.Name)
+		err = rows.Scan(&tmpFollowing.Name)
 		if err != nil {
 			return Profile{}, err
 		}
 
-		if db.CheckBan(tmpFollowingId, profileId) == nil { // L'utente è stato bannato da un suo follower
-			profile.Following = append(profile.Following, tmpFollowing)
-		}
+		profile.Following = append(profile.Following, tmpFollowing)
 	}
 	if err := rows.Err(); err != nil {
 		return Profile{}, err
 	}
 
 	rows.Close()
-	rows, err = db.c.Query(`SELECT ID, Nome FROM Utente WHERE ID IN (SELECT Utente FROM Segue WHERE Follower = ?);`, profileId)
+	rows, err = db.c.Query(`SELECT Nome FROM Utente WHERE ID IN (SELECT Utente FROM Segue WHERE Follower = ?);`, profileId)
 	if err != nil {
 		return Profile{}, err
 	}
 
-	var tmpFollowerId string
 	var tmpFollower UserName
 	for rows.Next() {
-		err = rows.Scan(&tmpFollowerId, &tmpFollower.Name)
+		err = rows.Scan(&tmpFollower.Name)
 		if err != nil {
 			return Profile{}, err
 		}
 
-		if db.CheckBan(profileId, tmpFollowerId) == nil { //L'utente ha bannato qualcuno che lo segue
-			profile.Follower = append(profile.Follower, tmpFollower)
-		}
+		profile.Follower = append(profile.Follower, tmpFollower)
 	}
 	if err := rows.Err(); err != nil {
 		return Profile{}, err

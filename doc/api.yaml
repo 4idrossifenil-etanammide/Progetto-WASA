@@ -74,6 +74,7 @@ paths:
               schema:
                  $ref: "#/components/schemas/profile"
         "400": { $ref: "#/components/responses/BadRequest" }
+        "403": { $ref: "#/components/responses/Forbidden" }
                  
   /profiles/{user_name}/name:
     parameters:
@@ -104,7 +105,7 @@ paths:
         "204":
           description: The user_name was successfully changed
         "401": { $ref: "#/components/responses/Unauthorized" }
-        "403": { $ref: "#/components/responses/Forbidden" }
+        "409": { $ref: "#/components/responses/Conflict" }
         "500": { $ref: "#/components/responses/InternalServerError" }
           
   /profiles/{user_name}/banned/{banned_user}:
@@ -584,6 +585,8 @@ components:
       description: You do not have permission to do this operation
     Forbidden:
       description: You cannot do this operation
+    Conflict:
+      description: The request could not be completed due to a conflict with the current state of the resource
   schemas:
     profile:
       title: profile
