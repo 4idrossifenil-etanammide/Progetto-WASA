@@ -29,6 +29,7 @@ func (db *appdbimpl) LikePhoto(photoId string, user string) error {
 			return err
 		}
 	} else {
+		rows.Close()
 		return ErrPhoto
 	}
 	rows.Close() // -> Required, otherwise the database remains locked
@@ -50,6 +51,7 @@ func (db *appdbimpl) LikePhoto(photoId string, user string) error {
 			return err
 		}
 	} else {
+		rows.Close()
 		return ErrUserDoesntExist
 	}
 
@@ -59,6 +61,7 @@ func (db *appdbimpl) LikePhoto(photoId string, user string) error {
 		return err
 	}
 	if rows.Next() {
+		rows.Close()
 		return nil
 	}
 	if err := rows.Err(); err != nil {

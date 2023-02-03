@@ -9,8 +9,8 @@ export default{
         }
     },
     async mounted(){
+        this.photoComments = this.comments == null ? [] : this.comments
         console.log(this.photoComments)
-        this.photoComments = this.comments
         this.name = localStorage.getItem("name")
     },
     methods: {

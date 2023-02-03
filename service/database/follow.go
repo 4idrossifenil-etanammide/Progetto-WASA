@@ -18,8 +18,8 @@ func (db *appdbimpl) Follow(userId string, follower string) error {
 	if err := rows.Err(); err != nil {
 		return err
 	}
-
 	rows.Close()
+
 	rows, err = db.c.Query(`SELECT * FROM Segue WHERE Utente = ? AND Follower = ?`, userId, followerId)
 	if err != nil {
 		return err
@@ -37,8 +37,8 @@ func (db *appdbimpl) Follow(userId string, follower string) error {
 	if err != nil {
 		return err
 	}
-
 	rows.Close() // -> Required, otherwise the database remains locked
+
 	_, err = db.c.Exec(`INSERT INTO Segue(Utente, Follower) VALUES (?,?);`, userId, followerId)
 	if err != nil {
 		return err

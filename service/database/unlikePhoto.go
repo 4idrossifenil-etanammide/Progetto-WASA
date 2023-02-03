@@ -34,6 +34,8 @@ func (db *appdbimpl) UnlikePhoto(photoId string, user string) error {
 			return err
 		}
 	} else {
+		rows1.Close()
+		rows.Close()
 		return ErrUserDoesntExist
 	}
 

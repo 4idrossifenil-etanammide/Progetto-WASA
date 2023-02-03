@@ -23,6 +23,7 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 			return Profile{}, err
 		}
 	} else {
+		rows.Close()
 		return Profile{}, ErrUserDoesntExist
 	}
 

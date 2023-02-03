@@ -20,6 +20,7 @@ func (db *appdbimpl) GetLikePhoto(photoId string, user string) (bool, error) {
 			return false, err
 		}
 	} else {
+		rows.Close()
 		return false, ErrUserDoesntExist
 	}
 

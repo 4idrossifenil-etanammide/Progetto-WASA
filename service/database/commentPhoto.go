@@ -14,8 +14,8 @@ func (db *appdbimpl) CommentPhoto(photoId string, comment Comment) (CommentID, e
 	if err := rows.Err(); err != nil {
 		return CommentID{}, err
 	}
-
 	rows.Close()
+
 	rows, err = db.c.Query(`SELECT ID FROM Utente WHERE Nome = ?;`, comment.Name)
 	if err != nil {
 		return CommentID{}, err
@@ -31,8 +31,8 @@ func (db *appdbimpl) CommentPhoto(photoId string, comment Comment) (CommentID, e
 	if err := rows.Err(); err != nil {
 		return CommentID{}, err
 	}
-
 	rows.Close()
+
 	_, err = db.c.Exec(`INSERT INTO Commenti(FotoReference, Utente, Testo) VALUES (?, ?, ?);`, photoId, userId, comment.Text)
 	if err != nil {
 		return CommentID{}, err
@@ -58,7 +58,6 @@ func (db *appdbimpl) CommentPhoto(photoId string, comment Comment) (CommentID, e
 	if err := rows.Err(); err != nil {
 		return CommentID{}, err
 	}
-
 	rows.Close()
 
 	var valueToReturn int
