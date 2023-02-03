@@ -1,81 +1,85 @@
 <script>
+import WASAPhotoBanner from '../components/WASAPhotoBanner.vue'
+
 export default {
     data() {
         return {
-            profileName : "",
-            profileData : [],
-            followButtonLabel : "Follow",
-            banButtonLabel : "Ban",
-            followerNumber : 0,
-            banColor : {r : 199, g: 29, b: 29, a: 1},
-            followColor : {r : 41, g: 216, b: 47, a: 1},
+            profileName: "",
+            profileData: [],
+            followButtonLabel: "Follow",
+            banButtonLabel: "Ban",
+            followerNumber: 0,
+            banColor: { r: 199, g: 29, b: 29, a: 1 },
+            followColor: { r: 41, g: 216, b: 47, a: 1 },
             personalProfile: false,
             userNotFound: false
-        }
+        };
     },
     async mounted() {
-        try{   
-            this.profileName = localStorage.getItem("profile")
-            this.personalProfile = this.profileName == localStorage.getItem("name")
-            if(this.personalProfile){
-                this.$router.replace("/homepage/profile/personal")
+        try {
+            this.profileName = localStorage.getItem("profile");
+            this.personalProfile = this.profileName == localStorage.getItem("name");
+            if (this.personalProfile) {
+                this.$router.replace("/homepage/profile/personal");
             }
-            let response = await this.$axios.get("/profiles/" + this.profileName)
-            this.profileData = response.data
-            console.log(this.profileData)
+            let response = await this.$axios.get("/profiles/" + this.profileName);
+            this.profileData = response.data;
+            console.log(this.profileData);
             if (this.profileData["Follower"] != null) {
-                this.followerNumber = this.profileData["Follower"] == null ? 0 : this.profileData["Follower"].length
-                for(let i = 0; i < this.profileData["Follower"].length; i++){
-                    if(localStorage.getItem("name") == this.profileData["Follower"][i]["name"]){
-                        this.followButtonLabel = "Unfollow"
-                        break
+                this.followerNumber = this.profileData["Follower"] == null ? 0 : this.profileData["Follower"].length;
+                for (let i = 0; i < this.profileData["Follower"].length; i++) {
+                    if (localStorage.getItem("name") == this.profileData["Follower"][i]["name"]) {
+                        this.followButtonLabel = "Unfollow";
+                        break;
                     }
                 }
             }
-            let risp = await this.$axios.get("/profiles/" + localStorage.getItem("name") + "/banned/" + localStorage.getItem("profile"))
-            let dataBan = risp.data["banned"]
-            this.banButtonLabel = dataBan == "true" ? "Unban" : "Ban"
-
-            if(this.banButtonLabel == "Unban") {
-                this.followColor.a = 0.2
+            let risp = await this.$axios.get("/profiles/" + localStorage.getItem("name") + "/banned/" + localStorage.getItem("profile"));
+            let dataBan = risp.data["banned"];
+            this.banButtonLabel = dataBan == "true" ? "Unban" : "Ban";
+            if (this.banButtonLabel == "Unban") {
+                this.followColor.a = 0.2;
             }
-            if(this.followButtonLabel == "Unfollow") {
-                this.banColor.a = 0.2
+            if (this.followButtonLabel == "Unfollow") {
+                this.banColor.a = 0.2;
             }
-        } catch (e) {
+        }
+        catch (e) {
             this.userNotFound = true;
         }
     },
-    methods : {
+    methods: {
         async follow() {
-            if (this.banButtonLabel != "Unban"){
+            if (this.banButtonLabel != "Unban") {
                 if (this.followButtonLabel == "Follow") {
-                    this.followerNumber = this.followerNumber + 1
-                    this.followButtonLabel = "Unfollow"
+                    this.followerNumber = this.followerNumber + 1;
+                    this.followButtonLabel = "Unfollow";
                     await this.$axios.put("/profiles/" + localStorage.getItem("name") + "/followers/" + this.profileName, {
-                        name : this.profileName
-                    })
-                    this.banColor.a = 0.2
-                } else {
-                    this.followerNumber = this.followerNumber - 1
-                    this.followButtonLabel = "Follow"
-                    await this.$axios.delete("/profiles/" + localStorage.getItem("name") + "/followers/" + this.profileName)
-                    this.banColor.a = 1
+                        name: this.profileName
+                    });
+                    this.banColor.a = 0.2;
+                }
+                else {
+                    this.followerNumber = this.followerNumber - 1;
+                    this.followButtonLabel = "Follow";
+                    await this.$axios.delete("/profiles/" + localStorage.getItem("name") + "/followers/" + this.profileName);
+                    this.banColor.a = 1;
                 }
             }
         },
         async ban() {
-            if (this.followButtonLabel != "Unfollow"){
+            if (this.followButtonLabel != "Unfollow") {
                 if (this.banButtonLabel == "Ban") {
-                    this.banButtonLabel = "Unban"
+                    this.banButtonLabel = "Unban";
                     await this.$axios.put("/profiles/" + localStorage.getItem("name") + "/banned/" + localStorage.getItem("profile"), {
-                        name : localStorage.getItem("profile")
-                    })
-                    this.followColor.a = 0.2
-                } else {
-                    this.banButtonLabel = "Ban"
-                    await this.$axios.delete("/profiles/" + localStorage.getItem("name") + "/banned/" + localStorage.getItem("profile"))
-                    this.followColor.a = 1
+                        name: localStorage.getItem("profile")
+                    });
+                    this.followColor.a = 0.2;
+                }
+                else {
+                    this.banButtonLabel = "Ban";
+                    await this.$axios.delete("/profiles/" + localStorage.getItem("name") + "/banned/" + localStorage.getItem("profile"));
+                    this.followColor.a = 1;
                 }
             }
             this.update();
@@ -83,13 +87,14 @@ export default {
         update() {
             this.$router.go(0);
         }
-    }
+    },
+    components: { WASAPhotoBanner }
 }
 </script>
 
 <template>
     <div class="page">
-        <Header @updateParent="update"></Header>
+        <WASAPhotoBanner @updateParent="update"></WASAPhotoBanner>
         <div class="user-not-found" v-show="this.userNotFound">
             <h1 class="user-not-found-label"> User Not Found</h1>
         </div>
@@ -127,7 +132,7 @@ export default {
             </div>
         </div>
         <div class="photo-container" v-show="this.banButtonLabel !== 'Unban'">
-            <div class="photo" v-if="this.profileData['Photos'] != null" v-for="photo in this.profileData['Photos']" :key="photo.photoID">
+            <div class="photo" v-show="this.profileData['Photos'] != null" v-for="photo in this.profileData['Photos']" :key="photo.photoID">
                 <Photo :id="photo.photoID" :name="this.profileName" :likes="photo.likeNumber" :comments="photo.commentNumber" :date="photo.date" :textComments="photo.comments"/>
             </div>
         </div>

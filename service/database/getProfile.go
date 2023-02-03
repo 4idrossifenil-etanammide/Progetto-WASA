@@ -45,7 +45,13 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 			return Profile{}, err
 		}
 
+		tmpPhoto.Comments, err = getComments(userId, tmpPhoto.PhotoID, db)
+		if err != nil {
+			return Profile{}, err
+		}
+		tmpPhoto.CommentNumber = len(tmpPhoto.Comments)
 		profile.Photos = append(profile.Photos, tmpPhoto)
+
 	}
 	if err := rows.Err(); err != nil {
 		return Profile{}, err

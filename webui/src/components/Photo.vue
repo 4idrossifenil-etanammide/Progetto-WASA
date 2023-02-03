@@ -120,7 +120,7 @@ export default {
                     </g>
                 </svg>
             </button>
-            <div v-if="showModal" >
+            <div v-show="showModal" >
                 <CommentModal 
                     @closeCommentModal="closeComment" 
                     @updateCommentCounter="updateNComment"

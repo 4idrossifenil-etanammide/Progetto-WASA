@@ -29,12 +29,12 @@ export default {
 
 <template>  
     <div class="page">
-        <Header></Header>
+        <WASAPhotoBanner></WASAPhotoBanner>
         <div class="no-photo-label" v-show="this.photos == null">
             <h1 class="no-photo-text"> No new Photos </h1>
         </div>
         <div class="photo-container">
-            <div class="photo" v-if="this.photos != null" v-for="photo in this.photos" :key="photo.photoID">
+            <div class="photo" v-show="this.photos != null" v-for="photo in this.photos" :key="photo.photoID">
                 <Photo :id="photo.photoID" :name="photo.name" :likes="photo.likeNumber" :comments="photo.commentNumber" :date="photo.date" :textComments="photo.comments"/>
             </div>
         </div>

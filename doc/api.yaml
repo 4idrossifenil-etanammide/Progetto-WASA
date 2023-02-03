@@ -75,6 +75,7 @@ paths:
                  $ref: "#/components/schemas/profile"
         "400": { $ref: "#/components/responses/BadRequest" }
         "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
                  
   /profiles/{user_name}/name:
     parameters:
@@ -587,6 +588,8 @@ components:
       description: You cannot do this operation
     Conflict:
       description: The request could not be completed due to a conflict with the current state of the resource
+    NotFound:
+      description: The requested resource was not found
   schemas:
     profile:
       title: profile

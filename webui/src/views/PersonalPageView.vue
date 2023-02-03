@@ -45,7 +45,7 @@ export default {
 
 <template>
     <div class="page">
-        <Header></Header>
+        <WASAPhotoBanner></WASAPhotoBanner>
         <div class="profile-info">
             <div class="profile-name"> {{ this.profileName }} </div>
             <div class="personal-profile-component">
@@ -80,7 +80,7 @@ export default {
             </div>
         </div>
         <div class="photo-container">
-            <div class="photo" v-if="this.profileData['Photos'] != null" v-for="photo in this.profileData['Photos']" :key="photo.photoID">
+            <div class="photo" v-show="this.profileData['Photos'] != null" v-for="photo in this.profileData['Photos']" :key="photo.photoID">
                 <Photo :id="photo.photoID" :name="this.userName" :likes="photo.likeNumber" :comments="photo.commentNumber" :date="photo.date" :textComments="photo.comments"/>
             </div>
         </div>

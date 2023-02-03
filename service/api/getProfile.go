@@ -25,6 +25,10 @@ func (rt *_router) GetProfile(w http.ResponseWriter, r *http.Request, ps httprou
 		if errors.Is(err, database.ErrBan) {
 			w.WriteHeader(http.StatusForbidden)
 			return
+		} else if errors.Is(err, database.ErrUserDoesntExist) {
+			ctx.Logger.WithError(err).Error("Operation failed!")
+			w.WriteHeader(http.StatusNotFound)
+			return
 		} else {
 			ctx.Logger.WithError(err).Error("Operation failed!")
 			w.WriteHeader(http.StatusBadRequest)
