@@ -8,7 +8,7 @@ export default{
             commentError: false
         }
     },
-    async mounted(){
+    mounted(){
         this.photoComments = this.comments == null ? [] : this.comments
         console.log(this.photoComments)
         this.name = localStorage.getItem("name")
@@ -19,20 +19,22 @@ export default{
                 this.commentError = true;
             } else {
                 this.commentError = false;
-                let response = await this.$axios.post("/profiles/" + this.user + "/photos/" + this.photoID + "/comments", {
-                    name : localStorage.getItem("name"),
-                    comment: this.commentToSend
-                })
-                console.log(response.data)
-                this.photoComments.push({
-                    id : response.data["id"],
-                    name : localStorage.getItem("name"),
-                    comment: this.commentToSend
-                })
-                console.log(this.photoComments)
-                this.commentToSend = '';
-                this.$refs.commentRef.reset();
-                this.$emit('updateCommentCounter', true)
+                try{
+                    let response = await this.$axios.post("/profiles/" + this.user + "/photos/" + this.photoID + "/comments", {
+                        name : localStorage.getItem("name"),
+                        comment: this.commentToSend
+                    })
+                    this.photoComments.push({
+                        id : response.data["id"],
+                        name : localStorage.getItem("name"),
+                        comment: this.commentToSend
+                    })
+                    this.commentToSend = '';
+                    this.$refs.commentRef.reset();
+                    this.$emit('updateCommentCounter', true)
+                } catch (e) {
+                    console.log(e)
+                }
             }
         },
         async cancelComment(idComment) {

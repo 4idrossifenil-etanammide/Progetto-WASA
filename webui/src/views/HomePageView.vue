@@ -9,14 +9,20 @@ export default {
         }
     },
     async mounted() {
-        await this.caricaFoto();
+        try{
+            await this.caricaFoto();
+        } catch(e) {
+            console.log(e)
+        }
     },
     methods: {
         async caricaFoto() {
             try{
                 const response = await this.$axios.get("/profiles/" + localStorage.getItem("name") + "/photos")
                 this.photos = response.data["photos"]
-            } catch (e) {}
+            } catch (e) {
+                console.log(e)
+            }
         },
         search() {
             this.userToSearch = this.$refs.userToSearch.value;

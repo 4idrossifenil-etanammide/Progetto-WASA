@@ -50,39 +50,47 @@ export default {
     },
     methods: {
         async follow() {
-            if (this.banButtonLabel != "Unban") {
-                if (this.followButtonLabel == "Follow") {
-                    this.followerNumber = this.followerNumber + 1;
-                    this.followButtonLabel = "Unfollow";
-                    await this.$axios.put("/profiles/" + localStorage.getItem("name") + "/followers/" + this.profileName, {
-                        name: this.profileName
-                    });
-                    this.banColor.a = 0.2;
+            try{
+                if (this.banButtonLabel != "Unban") {
+                    if (this.followButtonLabel == "Follow") {
+                        this.followerNumber = this.followerNumber + 1;
+                        this.followButtonLabel = "Unfollow";
+                        await this.$axios.put("/profiles/" + localStorage.getItem("name") + "/followers/" + this.profileName, {
+                            name: this.profileName
+                        });
+                        this.banColor.a = 0.2;
+                    }
+                    else {
+                        this.followerNumber = this.followerNumber - 1;
+                        this.followButtonLabel = "Follow";
+                        await this.$axios.delete("/profiles/" + localStorage.getItem("name") + "/followers/" + this.profileName);
+                        this.banColor.a = 1;
+                    }
                 }
-                else {
-                    this.followerNumber = this.followerNumber - 1;
-                    this.followButtonLabel = "Follow";
-                    await this.$axios.delete("/profiles/" + localStorage.getItem("name") + "/followers/" + this.profileName);
-                    this.banColor.a = 1;
-                }
+            } catch(e) {
+                console.log(e)
             }
         },
         async ban() {
-            if (this.followButtonLabel != "Unfollow") {
-                if (this.banButtonLabel == "Ban") {
-                    this.banButtonLabel = "Unban";
-                    await this.$axios.put("/profiles/" + localStorage.getItem("name") + "/banned/" + localStorage.getItem("profile"), {
-                        name: localStorage.getItem("profile")
-                    });
-                    this.followColor.a = 0.2;
+            try{
+                if (this.followButtonLabel != "Unfollow") {
+                    if (this.banButtonLabel == "Ban") {
+                        this.banButtonLabel = "Unban";
+                        await this.$axios.put("/profiles/" + localStorage.getItem("name") + "/banned/" + localStorage.getItem("profile"), {
+                            name: localStorage.getItem("profile")
+                        });
+                        this.followColor.a = 0.2;
+                    }
+                    else {
+                        this.banButtonLabel = "Ban";
+                        await this.$axios.delete("/profiles/" + localStorage.getItem("name") + "/banned/" + localStorage.getItem("profile"));
+                        this.followColor.a = 1;
+                    }
                 }
-                else {
-                    this.banButtonLabel = "Ban";
-                    await this.$axios.delete("/profiles/" + localStorage.getItem("name") + "/banned/" + localStorage.getItem("profile"));
-                    this.followColor.a = 1;
-                }
+                this.update();
+            } catch(e) {
+                console.log(e)
             }
-            this.update();
         },
         update() {
             this.$router.go(0);

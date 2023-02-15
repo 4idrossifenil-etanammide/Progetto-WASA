@@ -24,6 +24,7 @@ export default {
 					localStorage.setItem("token", this.response.id);
 					localStorage.setItem("name", this.username);
 				}catch (e) {
+					console.log(e)
 				}
 				console.log(this.username + ": " + this.response.id);
 				this.loading = false;

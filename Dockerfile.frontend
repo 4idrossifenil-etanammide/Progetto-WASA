@@ -1,3 +1,5 @@
+# Use docker run -it -p 8080:80 --rm name
+# The -p flag specifies that from hostPort(8080) we go to the container port(80)
 FROM node:lts as frontend-builder
 WORKDIR /src/webui
 COPY webui .
@@ -5,4 +7,5 @@ RUN npm run build-prod
 
 FROM nginx:stable
 COPY --from=frontend-builder /src/webui/dist /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 80 
+# The EXPOSE instruction informs Docker that the container listens on the specified network ports at runtime. 

@@ -8,7 +8,6 @@ export default {
     },
     methods: {
         search() {
-            console.log(this.$route.path)
             this.userToSearch = this.$refs.userToSearch.value;
             localStorage.setItem("profile", this.userToSearch)
             if(this.$route.path == "/homepage/profile") {
@@ -18,7 +17,6 @@ export default {
             }
         },
         goPersonalProfile() {
-            console.log("AAAAAA")
             localStorage.setItem("profile", localStorage.getItem("name"))
             this.$router.replace("/homepage/profile/personal");
         },

@@ -19,16 +19,20 @@ export default {
     },
     methods: {
         async putLike() {
-            if (this.heartColor == "red") {
-                this.heartColor = "black"
-                this.nLike = this.nLike - 1
-                await this.$axios.delete("/profiles/" + this.name + "/photos/" + this.id + "/likes/" + localStorage.getItem("name"))
-            } else {
-                this.heartColor = "red"
-                this.nLike = this.nLike + 1
-                await this.$axios.put("/profiles/" + this.name + "/photos/" + this.id + "/likes/" + localStorage.getItem("name"), {
-                    name : localStorage.getItem("name")
-                })
+            try {
+                if (this.heartColor == "red") {
+                    this.heartColor = "black"
+                    this.nLike = this.nLike - 1
+                    await this.$axios.delete("/profiles/" + this.name + "/photos/" + this.id + "/likes/" + localStorage.getItem("name"))
+                } else {
+                    this.heartColor = "red"
+                    this.nLike = this.nLike + 1
+                    await this.$axios.put("/profiles/" + this.name + "/photos/" + this.id + "/likes/" + localStorage.getItem("name"), {
+                        name : localStorage.getItem("name")
+                    })
+                }
+            } catch(e) {
+                console.log(e)
             }
         },
         async initializePhoto() {
@@ -36,7 +40,9 @@ export default {
                 let risp = await this.$axios.get("/profiles/" + this.name + "/photos/" + this.id + "/likes/" + localStorage.getItem("name"))
                 this.initColor = risp.data["liked"]
                 this.heartColor = this.initColor == "true" ? "red" : "black"
-            } catch (e) {}
+            } catch (e) {
+                console.log(e)
+            }
         },
         closeComment(bool) {
             this.showModal = bool;
@@ -50,8 +56,12 @@ export default {
             }
         },
         async deletePhoto() {
-            await this.$axios.delete("/profiles/" + localStorage.getItem("name") + "/photos/" + this.id)
-            this.$router.go(0);
+            try{
+                await this.$axios.delete("/profiles/" + localStorage.getItem("name") + "/photos/" + this.id)
+                this.$router.go(0);
+            } catch(e) {
+                console.log(e)
+            }
         }
     },
 

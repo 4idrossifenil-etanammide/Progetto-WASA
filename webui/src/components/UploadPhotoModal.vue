@@ -7,9 +7,13 @@ export default {
     },
     methods : {
         async uploadImage(event) {
-            const file = event.target.files[0];
-            await this.$axios.post("/profiles/" + localStorage.getItem("name") + "/photos", file)
-            this.$emit('closePhotoModal', true)
+            try{
+                const file = event.target.files[0];
+                await this.$axios.post("/profiles/" + localStorage.getItem("name") + "/photos", file)
+                this.$emit('closePhotoModal', true)
+            } catch(e) {
+                console.log(e)
+            }
         }
     }
 }

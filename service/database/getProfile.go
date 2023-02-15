@@ -50,6 +50,11 @@ func (db *appdbimpl) GetProfile(userId string, profileName string) (Profile, err
 			return Profile{}, err
 		}
 		tmpPhoto.CommentNumber = len(tmpPhoto.Comments)
+		toSubtract, err := filterLike(tmpPhoto.PhotoID, userId, db)
+		if err != nil {
+			return Profile{}, err
+		}
+		tmpPhoto.LikeNumber = tmpPhoto.LikeNumber - toSubtract
 		profile.Photos = append(profile.Photos, tmpPhoto)
 
 	}

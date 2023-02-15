@@ -16,9 +16,10 @@ export default {
             this.profileName = localStorage.getItem("profile")
             let response = await this.$axios.get("/profiles/" + this.profileName)
             this.profileData = response.data
-            console.log(this.profileData)
             this.followerNumber = this.profileData["Follower"] == null ? 0 : this.profileData["Follower"].length
-        }catch(e){}
+        }catch(e){
+            console.log(e)
+        }
     },
     methods : {
         uploadPhoto() {
