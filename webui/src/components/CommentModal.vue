@@ -10,7 +10,6 @@ export default{
     },
     mounted(){
         this.photoComments = this.comments == null ? [] : this.comments
-        console.log(this.photoComments)
         this.name = localStorage.getItem("name")
     },
     methods: {

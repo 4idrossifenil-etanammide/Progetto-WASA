@@ -23,6 +23,7 @@ func (db *appdbimpl) SetName(id string, newUserName string) error {
 		}
 
 		if output == newUserName {
+			rows.Close()
 			return ErrChangeName
 		}
 	}

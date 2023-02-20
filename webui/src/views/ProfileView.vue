@@ -24,7 +24,6 @@ export default {
             }
             let response = await this.$axios.get("/profiles/" + this.profileName);
             this.profileData = response.data;
-            console.log(this.profileData);
             if (this.profileData["Follower"] != null) {
                 this.followerNumber = this.profileData["Follower"] == null ? 0 : this.profileData["Follower"].length;
                 for (let i = 0; i < this.profileData["Follower"].length; i++) {

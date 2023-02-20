@@ -26,7 +26,6 @@ export default {
 				}catch (e) {
 					console.log(e)
 				}
-				console.log(this.username + ": " + this.response.id);
 				this.loading = false;
 				this.$router.push("/homepage");
 			}
